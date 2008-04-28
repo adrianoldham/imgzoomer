@@ -97,8 +97,8 @@ shadowTheme - The shadow theme name, included themes are "light, medium or dark"
 shadowWidth - The visible portion of shadow file displayed in pixels
 shadowImageWidth - The actual shadow imge file dimensions in pixels
 */
-var ImageZoomer = Class.create();
-ImageZoomer.prototype = {
+var ImgZoomer = Class.create();
+ImgZoomer.prototype = {
     initialize: function(linkSelector, options) {        
         this.linkElements       = new Array();
         this.zoomedImages       = new Array();
