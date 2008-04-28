@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html>
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<title>index</title>
+	<script type="text/javascript" charset="utf-8" src="../lib/prototype.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../lib/scriptaculous.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../js/imgzoomer.js"></script>
+	
+	<style type="text/css" media="screen">
+		a img {
+			border-style: none;
+		}
+	</style>
+</head>
+<body id="index" onload="">
+	<br/>
+	<br/>
+	<br/>
+	
+	<a href="images/test.jpg"><img src="images/thumb.jpg" /></a>
+	<a href="images/test2.jpg"><img src="images/thumb2.jpg" /></a>
+			
+	<script type="text/javascript" charset="utf-8">
+		var imageZoomer = new ImageZoomer("a", {
+			imagePath: "../images/zoomer/",
+			windowTheme: "classic",
+			shadowTheme: "light"
+			});
+	</script>
+</body>
+</html>
