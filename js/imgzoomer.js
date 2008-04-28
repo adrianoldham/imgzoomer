@@ -97,6 +97,7 @@ shadowTheme - The shadow theme name, included themes are "light, medium or dark"
 shadowWidth - The visible portion of shadow file displayed in pixels
 shadowImageWidth - The actual shadow imge file dimensions in pixels
 imgZoomerClass - The CSS classname applied to the imgZoomer container
+zIndex - The topmost zIndex from which all others are derived
 */
 var ImgZoomer = Class.create();
 ImgZoomer.prototype = {
@@ -128,8 +129,9 @@ ImgZoomer.prototype = {
         this.options.closeBox = this.options.closeBox || "closebox.png";
         this.options.loadingSpinner = this.options.loadingSpinner || "spinner.gif";
 
-        // class defaults
+        // styling defaults
         this.options.imgZoomerClass = this.options.imgZoomerClass || "imgZoomer";
+        this.options.zIndex = this.options.zIndex || 2000;
 
         // no fading shadows for IE
         if (navigator.appName == "Microsoft Internet Explorer") {
@@ -141,19 +143,19 @@ ImgZoomer.prototype = {
 
         this.imgZoomer = new Element("div");
         this.imgZoomer.addClassName(this.options.imgZoomerClass);
-        
+
         // create close box
         this.closeBox = new Image();
         this.closeBox.src               = this.options.imagePath + "window/" + this.options.windowTheme + "/" + this.options.closeBox;
         this.closeBox.style.position    = "absolute";
         this.closeBox.style.cursor      = "pointer";
-        this.closeBox.style.zIndex      = 2000;
+        this.closeBox.style.zIndex      = this.options.zIndex;
         
         // create loading spinner
         this.loadingSpinner = new Image();
         this.loadingSpinner.src             = this.options.imagePath + "spinner/" + this.options.spinnerTheme + "/" + this.options.loadingSpinner;
         this.loadingSpinner.style.position  = "absolute";
-        this.loadingSpinner.style.zIndex    = 2000;
+        this.loadingSpinner.style.zIndex    = this.options.zIndex;
         
         // make them prototyp-ed
         Element.extend(this.closeBox);
@@ -165,7 +167,7 @@ ImgZoomer.prototype = {
         
         // create and add shadows
         this.shadowHolder = new Element("div", { position: "absolute" });
-        this.shadowHolder.style.zIndex = 1998;
+        this.shadowHolder.style.zIndex = this.options.zIndex - 2;
 
         if (this.options.shadows) {
             this.shadows = new Array();
@@ -225,7 +227,7 @@ ImgZoomer.prototype = {
             zoomedImage.style.left      = absolutePosition[0] + "px";
             zoomedImage.style.top       = absolutePosition[1] + "px";
             zoomedImage.style.cursor    = "pointer";
-            zoomedImage.style.zIndex    = 1999;
+            zoomedImage.style.zIndex    = this.options.zIndex - 1;
             zoomedImage.alt = e.title;
             zoomedImage.hide();
             
