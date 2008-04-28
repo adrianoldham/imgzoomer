@@ -112,7 +112,7 @@ ImageZoomer.prototype = {
         this.options.toggleDuration = this.options.toggleDuration || (this.options.duration / 1.75);
 
         // path defaults
-        this.options.imagePath = this.options.imagePath || "/images/zoomer/";
+        this.options.imagePath = this.options.imagePath || "/images/imgzoomer/";
 
         // theme defaults
         this.options.windowTheme = this.options.windowTheme || "classic";
