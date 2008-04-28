@@ -200,7 +200,8 @@ ImgZoomer.prototype = {
             // create the zoomed image element            
             var zoomedImage = new Image();
             zoomedImage.src = e.href;
-            zoomedImage.alt = e.alt;
+            zoomedImage.alt = e.title;
+            zoomedImage.title = e.title;
             
             Element.extend(zoomedImage);            
             
