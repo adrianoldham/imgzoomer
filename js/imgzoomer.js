@@ -96,6 +96,7 @@ spinnerTheme - The loading spinner theme, included themes are "black, white"
 shadowTheme - The shadow theme name, included themes are "light, medium or dark"
 shadowWidth - The visible portion of shadow file displayed in pixels
 shadowImageWidth - The actual shadow imge file dimensions in pixels
+imgZoomerClass - The CSS classname applied to the imgZoomer container
 */
 var ImgZoomer = Class.create();
 ImgZoomer.prototype = {
@@ -122,10 +123,13 @@ ImgZoomer.prototype = {
         // shadow defaults
         this.options.shadowWidth = this.options.shadowWidth || 15;
         this.options.shadowImageWidth = this.options.shadowImageWidth || 30;
-        
+
         // filename defaults
         this.options.closeBox = this.options.closeBox || "closebox.png";
         this.options.loadingSpinner = this.options.loadingSpinner || "spinner.gif";
+
+        // class defaults
+        this.options.imgZoomerClass = this.options.imgZoomerClass || "imgZoomer";
 
         // no fading shadows for IE
         if (navigator.appName == "Microsoft Internet Explorer") {
@@ -134,15 +138,18 @@ ImgZoomer.prototype = {
         
         if (this.options.shadows == null)
             this.options.shadows = true;
+
+        this.imgZoomer = new Element("div");
+        this.imgZoomer.addClassName(this.options.imgZoomerClass);
         
-        // add close box to document body
+        // create close box
         this.closeBox = new Image();
         this.closeBox.src               = this.options.imagePath + "window/" + this.options.windowTheme + "/" + this.options.closeBox;
         this.closeBox.style.position    = "absolute";
         this.closeBox.style.cursor      = "pointer";
         this.closeBox.style.zIndex      = 2000;
         
-        // add loading spinner to document body
+        // create loading spinner
         this.loadingSpinner = new Image();
         this.loadingSpinner.src             = this.options.imagePath + "spinner/" + this.options.spinnerTheme + "/" + this.options.loadingSpinner;
         this.loadingSpinner.style.position  = "absolute";
@@ -151,14 +158,14 @@ ImgZoomer.prototype = {
         // make them prototyp-ed
         Element.extend(this.closeBox);
         Element.extend(this.loadingSpinner);
+        Element.extend(this.imgZoomer);
              
         this.closeBox.hide();
         this.loadingSpinner.hide();
         
-        // add shadows
+        // create and add shadows
         this.shadowHolder = new Element("div", { position: "absolute" });
         this.shadowHolder.style.zIndex = 1998;
-        this.shadowHolder.addClassName("zoomer_window");
 
         if (this.options.shadows) {
             this.shadows = new Array();
@@ -174,12 +181,14 @@ ImgZoomer.prototype = {
                 this.shadowHolder.appendChild(this.shadows[i]);
             }
         }
-        
-        this.shadowHolder.appendChild(this.closeBox);
 
-        document.body.appendChild(this.loadingSpinner);
-        document.body.appendChild(this.shadowHolder);
-        
+        // append our elements to the imgZoomer container        
+        this.imgZoomer.appendChild(this.closeBox);
+        this.imgZoomer.appendChild(this.loadingSpinner);
+        this.imgZoomer.appendChild(this.shadowHolder);
+
+        document.body.appendChild(this.imgZoomer);
+
         // grab all links we are converting into a function to zoom its linked image
         $$(linkSelector).each(this.setupPreload.bindAsEventListener(this));
     },
@@ -220,8 +229,8 @@ ImgZoomer.prototype = {
             zoomedImage.alt = e.title;
             zoomedImage.hide();
             
-            // add it to the document's body
-            document.body.appendChild(zoomedImage);
+            // append it to the imgZoomer container
+            this.imgZoomer.appendChild(zoomedImage);
             
             // add event for activating zoom function
             e.onclick = this.preload.bindAsEventListener(this, zoomedImage);
