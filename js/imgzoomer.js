@@ -60,11 +60,11 @@ Array.prototype.index = function(val) {
     }
   
     return null;
-}
+};
 
 Array.prototype.include = function(val) {
     return this.index(val) !== null;
-}
+};
 
 var IMAGE_FORMATS = ["png", "jpg", "jpeg", "gif", "tif", "tiff", "bmp"];
 
@@ -138,8 +138,9 @@ ImgZoomer.prototype = {
             this.options.fadeDuration = 0;
         }
         
-        if (this.options.shadows == null)
+        if (this.options.shadows == null) {
             this.options.shadows = true;
+        }
 
         this.imgZoomer = new Element("div");
         this.imgZoomer.addClassName(this.options.imgZoomerClass);
