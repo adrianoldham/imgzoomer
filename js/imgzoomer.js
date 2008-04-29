@@ -316,7 +316,7 @@ ImgZoomer.prototype = {
     
     preload: function(e, zoomedImage) {
         // only zoom image if none other is currently zooming
-        if (Effect.Queues.get('imgzoomer').size() != 0) return;
+        if (Effect.Queues.get('imgzoomer').size() != 0) return false;
         
         // close any currently zoomed images
         this.zoomedImages.each(this.resetImage.bindAsEventListener(this, zoomedImage));
