@@ -177,7 +177,7 @@ ImgZoomer.prototype = {
                 this.shadows[i] = new Image();
                 Element.extend(this.shadows[i]);
 
-                this.shadows[i].src = this.options.imagePath + "shadow/" + this.options.shadowTheme + "/shadow_" + i + ".png";
+                this.shadows[i].src = this.options.imagePath + "shadow/" + this.options.shadowImageWidth + "/" + this.options.shadowTheme + "/shadow_" + i + ".png";
                 this.shadows[i].style.position = "absolute";
                 this.shadows[i].hide();
             
