@@ -131,7 +131,7 @@ ImgZoomer.prototype = {
 
         // styling defaults
         this.options.imgZoomerClass = this.options.imgZoomerClass || "imgZoomer";
-        this.options.zIndex = this.options.zIndex || 2000;
+        this.options.zIndex = this.options.zIndex || 10000;
 
         // no fading shadows for IE
         if (navigator.appName == "Microsoft Internet Explorer") {
