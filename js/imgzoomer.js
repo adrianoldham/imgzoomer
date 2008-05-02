@@ -88,6 +88,9 @@ ShadowMe.prototype = {
         this.positionShadow(shadows[7], absolutePosition[0] + size.width - this.options.theme.shadowThemeSize + this.options.theme.shadowDepth, absolutePosition[1] - this.options.theme.shadowThemeSize + this.options.theme.shadowDepth + size.height, this.options.theme.shadowThemeSize, this.options.theme.shadowThemeSize);
         
         this.canShow = true;
+
+        if (!isNaN(element.style.zIndex))
+            this.shadowHolder.style.zIndex = element.style.zIndex - 2;
         
         return this;
     },
