@@ -167,7 +167,7 @@ ImgZoomer.prototype = {
         this.loadingSpinner.hide();
 
         // create and add shadows
-        this.shadowHolder = new Element("div", { position: "absolute" });
+        this.shadowHolder = new Element("div");
         this.shadowHolder.style.zIndex = this.options.zIndex - 2;
 
         if (this.options.shadows) {
