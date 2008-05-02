@@ -19,12 +19,18 @@
 	<br/>
 	<br/>
 	<br/>
-
+    
+    <div id="testShadow1" style="width: 300px; height: 100px">
+        A shadow on a DIV
+    </div>
 	<a href="images/test.jpg">test</a>	
-	<a href="images/test.jpg"><img src="images/thumb.jpg" /></a>
+	<a href="images/test.jpg"><img src="images/thumb.jpg" id="testShadow2" /></a>
 	<a href="images/test2.jpg"><img src="images/thumb2.jpg" /></a>
 			
 	<script type="text/javascript" charset="utf-8">
+	    $('testShadow1').applyShadow();
+	    $('testShadow2').applyShadow();
+	    
 		var ImgZoomer = new ImgZoomer("a", {
 			imagePath: "../images/imgzoomer/",
 			windowTheme: "classic",

@@ -1,3 +1,113 @@
+// A themes object that stores all our themes
+var Themes = new Object();
+Themes.Medium30 = {
+    windowTheme: "classic",
+    spinnerTheme: "black",
+    imagePath: "../images/imgzoomer/",
+	shadowTheme: "medium",
+	shadowThemeSize: 30,
+	shadowDepth: 15,
+	closeBox: "closebox.png",
+	spinner: "spinner.gif"
+};
+
+// ShadowMe class that applys shadows to elements
+var ShadowMe = Class.create();
+
+// Default ShadowMe options to use
+ShadowMe.DefaultOptions = {
+	theme: Themes.Medium30
+};
+
+ShadowMe.prototype = {
+	initialize: function(options) {
+		this.options = Object.extend(ShadowMe.DefaultOptions, options || {});
+		
+        this.shadowHolder = new Element("div");
+
+        for (var i = 1; i <= 8; i++) {
+            var shadow = Element.extend(new Image());
+
+            shadow.src = 
+                this.options.theme.imagePath +
+                "shadow/" +
+                this.options.theme.shadowThemeSize +"/" +
+                this.options.theme.shadowTheme +
+                "/shadow_" + i + ".png";
+            
+            shadow.style.position = "absolute";
+            shadow.hide();
+
+            this.shadowHolder.appendChild(shadow);
+        }
+        
+        return this;
+	},
+	
+	applyTo: function(element) {
+        if (element.complete != null) {
+            if (!element.complete) {
+                // if applying image to shadow and image width not know yet then wait until it is
+                setTimeout(this.applyTo.bind(this, element), 100);
+                return this;
+            }
+        }
+	    
+        var absolutePosition = element.cumulativeOffset();
+        var shadows = this.shadowHolder.childElements();
+        
+        var size = { width: element.getWidth(), height: element.getHeight() };
+
+        this.positionShadow(shadows[0], absolutePosition[0] - this.options.theme.shadowDepth, absolutePosition[1] - this.options.theme.shadowDepth, this.options.theme.shadowThemeSize, this.options.theme.shadowThemeSize);
+        this.positionShadow(shadows[1], absolutePosition[0] + this.options.theme.shadowThemeSize - this.options.theme.shadowDepth, absolutePosition[1] - this.options.theme.shadowDepth, size.width - (this.options.theme.shadowThemeSize * 2) + (this.options.theme.shadowDepth * 2), this.options.theme.shadowThemeSize);
+        this.positionShadow(shadows[2], absolutePosition[0] + size.width - this.options.theme.shadowThemeSize + this.options.theme.shadowDepth, absolutePosition[1] - this.options.theme.shadowDepth, this.options.theme.shadowThemeSize, this.options.theme.shadowThemeSize);
+
+        this.positionShadow(shadows[3], absolutePosition[0] - this.options.theme.shadowDepth, absolutePosition[1] + this.options.theme.shadowThemeSize - this.options.theme.shadowDepth, this.options.theme.shadowThemeSize, size.height - (this.options.theme.shadowThemeSize * 2) + (this.options.theme.shadowDepth * 2));
+        this.positionShadow(shadows[4], absolutePosition[0] + size.width - this.options.theme.shadowThemeSize + this.options.theme.shadowDepth, absolutePosition[1] + this.options.theme.shadowThemeSize - this.options.theme.shadowDepth, this.options.theme.shadowThemeSize, size.height - (this.options.theme.shadowThemeSize * 2) + (this.options.theme.shadowDepth * 2));
+
+        this.positionShadow(shadows[5], absolutePosition[0] - this.options.theme.shadowDepth, absolutePosition[1] + size.height - this.options.theme.shadowThemeSize + this.options.theme.shadowDepth, this.options.theme.shadowThemeSize, this.options.theme.shadowThemeSize);
+        this.positionShadow(shadows[6], absolutePosition[0] + this.options.theme.shadowThemeSize - this.options.theme.shadowDepth, absolutePosition[1] - this.options.theme.shadowThemeSize + this.options.theme.shadowDepth + size.height, size.width - (this.options.theme.shadowThemeSize * 2) + (this.options.theme.shadowDepth * 2), this.options.theme.shadowThemeSize);
+        this.positionShadow(shadows[7], absolutePosition[0] + size.width - this.options.theme.shadowThemeSize + this.options.theme.shadowDepth, absolutePosition[1] - this.options.theme.shadowThemeSize + this.options.theme.shadowDepth + size.height, this.options.theme.shadowThemeSize, this.options.theme.shadowThemeSize);
+        
+        this.canShow = true;
+        
+        return this;
+	},
+	
+    positionShadow: function(shadow, x, y, width, height) {
+        shadow.style.left = x + "px";
+        shadow.style.top = y + "px";
+
+        if (width != null) shadow.style.width = width + "px";
+        if (height != null) shadow.style.height = height + "px";
+    },
+    
+    appendToDom: function(appendTo) {
+        (appendTo || document.body).appendChild(this.shadowHolder);
+        return this;
+    },
+    
+    show: function() {
+        // only show when we can
+        if (!this.canShow) {
+            setTimeout(this.show.bind(this), 100);
+            return this;
+        }
+        
+        this.shadowHolder.childElements().each(function(shadow) {
+           shadow.show(); 
+        });
+        
+        return this;
+    }
+};
+
+// Quick helper function to apply shadow to an element
+// returns the div holding the shadow elements
+Element.addMethods({ applyShadow: function(element, theme) {
+    return (new ShadowMe(theme)).applyTo(element).appendToDom().show().shadowHolder;
+}});
+
 Effect.MoveAndResizeTo = Class.create(Effect.Base, {
     initialize: function(element, toTop, toLeft, toWidth, toHeight) {
 
@@ -68,16 +178,6 @@ Array.prototype.include = function(val) {
 
 var IMAGE_FORMATS = ["png", "jpg", "jpeg", "gif", "tif", "tiff", "bmp"];
 
-// Shadows numbers
-var SHADOW_TOP_LEFT = 1;
-var SHADOW_TOP = 2;
-var SHADOW_TOP_RIGHT = 3;
-var SHADOW_LEFT = 4;
-var SHADOW_RIGHT = 5;
-var SHADOW_BOTTOM_LEFT = 6;
-var SHADOW_BOTTOM = 7;
-var SHADOW_BOTTOM_RIGHT = 8;
-
 /*
 Image Zoomer Class
 ------------------
@@ -100,34 +200,21 @@ imgZoomerClass - The CSS classname applied to the imgZoomer container
 zIndex - The topmost zIndex from which all others are derived
 */
 var ImgZoomer = Class.create();
+
+ImgZoomer.DefaultOptions = {
+  duration: 0.5,
+  fadeDuration: 0.25,
+  toggleDuration: 0.29,
+  theme: Themes.Medium30
+};
+
 ImgZoomer.prototype = {
     initialize: function(linkSelector, options) {
         this.linkElements = new Array();
         this.zoomedImages = new Array();
         this.imageSizes = new Array();
 
-        this.options = options || {};
-
-        // duration defaults
-        this.options.duration = this.options.duration || 0.5;
-        this.options.fadeDuration = this.options.fadeDuration || (this.options.duration / 2);
-        this.options.toggleDuration = this.options.toggleDuration || (this.options.duration / 1.75);
-
-        // path defaults
-        this.options.imagePath = this.options.imagePath || "/images/imgzoomer/";
-
-        // theme defaults
-        this.options.windowTheme = this.options.windowTheme || "classic";
-        this.options.spinnerTheme = this.options.spinnerTheme || "black";
-        this.options.shadowTheme = this.options.shadowTheme || "medium";
-
-        // shadow defaults
-        this.options.shadowDepth = this.options.shadowDepth || this.options.shadowThemeSize / 2;
-        this.options.shadowThemeSize = this.options.shadowThemeSize || 30;
-
-        // filename defaults
-        this.options.closeBox = this.options.closeBox || "closebox.png";
-        this.options.loadingSpinner = this.options.loadingSpinner || "spinner.gif";
+        this.options = Object.extend(ImgZoomer.DefaultOptions, options || {});
 
         // styling defaults
         this.options.imgZoomerClass = this.options.imgZoomerClass || "imgZoomer";
@@ -147,14 +234,14 @@ ImgZoomer.prototype = {
 
         // create close box
         this.closeBox = new Image();
-        this.closeBox.src = this.options.imagePath + "window/" + this.options.windowTheme + "/" + this.options.closeBox;
+        this.closeBox.src = this.options.theme.imagePath + "window/" + this.options.theme.windowTheme + "/" + this.options.theme.closeBox;
         this.closeBox.style.position = "absolute";
         this.closeBox.style.cursor = "pointer";
         this.closeBox.style.zIndex = this.options.zIndex;
 
         // create loading spinner
         this.loadingSpinner = new Image();
-        this.loadingSpinner.src = this.options.imagePath + "spinner/" + this.options.spinnerTheme + "/" + this.options.loadingSpinner;
+        this.loadingSpinner.src = this.options.theme.imagePath + "spinner/" + this.options.theme.spinnerTheme + "/" + this.options.theme.spinner;
         this.loadingSpinner.style.position = "absolute";
         this.loadingSpinner.style.zIndex = this.options.zIndex;
 
@@ -167,23 +254,9 @@ ImgZoomer.prototype = {
         this.loadingSpinner.hide();
 
         // create and add shadows
-        this.shadowHolder = new Element("div");
+        this.shadowMe = new ShadowMe();
+        this.shadowHolder = this.shadowMe.shadowHolder;
         this.shadowHolder.style.zIndex = this.options.zIndex - 2;
-
-        if (this.options.shadows) {
-            this.shadows = new Array();
-
-            for (var i = 1; i <= 8; i++) {
-                this.shadows[i] = new Image();
-                Element.extend(this.shadows[i]);
-
-                this.shadows[i].src = this.options.imagePath + "shadow/" + this.options.shadowThemeSize + "/" + this.options.shadowTheme + "/shadow_" + i + ".png";
-                this.shadows[i].style.position = "absolute";
-                this.shadows[i].hide();
-
-                this.shadowHolder.appendChild(this.shadows[i]);
-            }
-        }
 
         // append our elements to the imgZoomer container
         this.imgZoomer.appendChild(this.closeBox);
@@ -221,9 +294,9 @@ ImgZoomer.prototype = {
             this.linkElements.push(e);
             this.zoomedImages.push(zoomedImage);
 
-            var firstElement = Element.childElements(this.findLink(zoomedImage)).first();
+            var firstElement = this.findLink(zoomedImage).childElements().first();
             if (firstElement == null) firstElement = this.findLink(zoomedImage);
-            var absolutePosition = Element.cumulativeOffset(firstElement);
+            var absolutePosition = firstElement.cumulativeOffset();
 
             zoomedImage.style.position = "absolute";
             zoomedImage.style.left = absolutePosition[0] + "px";
@@ -252,7 +325,7 @@ ImgZoomer.prototype = {
         // once zoomed make it clickable
         zoomedImage.onclick = this.toggleImage.bindAsEventListener(this, zoomedImage);
 
-        var absolutePosition = Element.cumulativeOffset(zoomedImage);
+        var absolutePosition = zoomedImage.cumulativeOffset();
 
         // opera required hack so that we can grab the images width and height
         this.closeBox.setOpacity(0);
@@ -267,9 +340,9 @@ ImgZoomer.prototype = {
         effects.push(new Effect.Appear(this.closeBox, { sync: true }));
 
         if (this.options.shadows) {
-            this.addShadows(zoomedImage);
+            this.shadowMe.applyTo(zoomedImage);
 
-            Element.childElements(this.shadowHolder).each(function(shadow) {
+            this.shadowHolder.childElements().each(function(shadow) {
                     effects.push(new Effect.Appear(shadow, { sync: true }));
                 }
             );
@@ -288,31 +361,6 @@ ImgZoomer.prototype = {
         this.loadingSpinner.style.top = (parentY + (parentHeight - this.loadingSpinner.height) / 2) + "px";
 
         this.loadingSpinner.show();
-    },
-
-    addShadows: function(zoomedImage) {
-        var absolutePosition = Element.cumulativeOffset(zoomedImage);
-
-        this.positionShadow(SHADOW_TOP_LEFT, absolutePosition[0] - this.options.shadowDepth, absolutePosition[1] - this.options.shadowDepth, this.options.shadowThemeSize, this.options.shadowThemeSize);
-        this.positionShadow(SHADOW_TOP, absolutePosition[0] + this.options.shadowThemeSize - this.options.shadowDepth, absolutePosition[1] - this.options.shadowDepth, zoomedImage.width - (this.options.shadowThemeSize * 2) + (this.options.shadowDepth * 2), this.options.shadowThemeSize);
-        this.positionShadow(SHADOW_TOP_RIGHT, absolutePosition[0] + zoomedImage.width - this.options.shadowThemeSize + this.options.shadowDepth, absolutePosition[1] - this.options.shadowDepth, this.options.shadowThemeSize, this.options.shadowThemeSize);
-
-        this.positionShadow(SHADOW_LEFT, absolutePosition[0] - this.options.shadowDepth, absolutePosition[1] + this.options.shadowThemeSize - this.options.shadowDepth, this.options.shadowThemeSize, zoomedImage.height - (this.options.shadowThemeSize * 2) + (this.options.shadowDepth * 2));
-        this.positionShadow(SHADOW_RIGHT, absolutePosition[0] + zoomedImage.width - this.options.shadowThemeSize + this.options.shadowDepth, absolutePosition[1] + this.options.shadowThemeSize - this.options.shadowDepth, this.options.shadowThemeSize, zoomedImage.height - (this.options.shadowThemeSize * 2) + (this.options.shadowDepth * 2));
-
-        this.positionShadow(SHADOW_BOTTOM_LEFT, absolutePosition[0] - this.options.shadowDepth, absolutePosition[1] + zoomedImage.height - this.options.shadowThemeSize + this.options.shadowDepth, this.options.shadowThemeSize, this.options.shadowThemeSize);
-        this.positionShadow(SHADOW_BOTTOM, absolutePosition[0] + this.options.shadowThemeSize - this.options.shadowDepth, absolutePosition[1] - this.options.shadowThemeSize + this.options.shadowDepth + zoomedImage.height, zoomedImage.width - (this.options.shadowThemeSize * 2) + (this.options.shadowDepth * 2), this.options.shadowThemeSize);
-        this.positionShadow(SHADOW_BOTTOM_RIGHT, absolutePosition[0] + zoomedImage.width - this.options.shadowThemeSize + this.options.shadowDepth, absolutePosition[1] - this.options.shadowThemeSize + this.options.shadowDepth + zoomedImage.height, this.options.shadowThemeSize, this.options.shadowThemeSize);
-    },
-
-    positionShadow: function(shadowNo, x, y, width, height) {
-        var shadow = this.shadows[shadowNo];
-
-        shadow.style.left = x + "px";
-        shadow.style.top = y + "px";
-
-        if (width != null) shadow.style.width = width + "px";
-        if (height != null) shadow.style.height = height + "px";
     },
 
     preload: function(e, zoomedImage) {
@@ -352,7 +400,7 @@ ImgZoomer.prototype = {
 
         // fade shadows too if we have any
         if (this.options.shadows) {
-            Element.childElements(this.shadowHolder).each(function(shadow) {
+            this.shadowHolder.childElements().each(function(shadow) {
                     effects.push(new Effect.Fade(shadow, { sync: true }));
                 }
             );
@@ -363,9 +411,9 @@ ImgZoomer.prototype = {
 
         // toggle zoom in or out
         if (zoomedImage.style.display != "none") {
-            var linkElement = Element.childElements(this.findLink(zoomedImage)).first();
+            var linkElement = this.findLink(zoomedImage).childElements().first();
             if (linkElement == null) linkElement = this.findLink(zoomedImage);
-            var absolutePosition = Element.cumulativeOffset(linkElement);
+            var absolutePosition = linkElement.cumulativeOffset();
 
             // hide shadows and close box first
             new Effect.Parallel(effects, { 
@@ -415,7 +463,7 @@ ImgZoomer.prototype = {
             // get original size of the image
             var zoomedIndex = this.zoomedImages.index(zoomedImage);
 
-            var firstElement = Element.childElements(this.findLink(zoomedImage)).first();
+            var firstElement = this.findLink(zoomedImage).childElements().first();
             if (firstElement == null) firstElement = this.findLink(zoomedImage);
             zoomedImage.style.width = firstElement.offsetWidth + "px";
             zoomedImage.style.height = firstElement.offsetHeight + "px";
