@@ -222,6 +222,7 @@ ImgZoomer.prototype = {
             this.zoomedImages.push(zoomedImage);
 
             var firstElement = Element.childElements(this.findLink(zoomedImage)).first();
+						if (firstElement == null) firstElement = this.findLink(zoomedImage);
             var absolutePosition = Element.cumulativeOffset(firstElement);
 
             zoomedImage.style.position = "absolute";
@@ -363,6 +364,7 @@ ImgZoomer.prototype = {
         // toggle zoom in or out
         if (zoomedImage.style.display != "none") {
             var linkElement = Element.childElements(this.findLink(zoomedImage)).first();
+						if (linkElement == null) linkElement = this.findLink(zoomedImage);
             var absolutePosition = Element.cumulativeOffset(linkElement);
 
             // hide shadows and close box first
@@ -414,6 +416,7 @@ ImgZoomer.prototype = {
             var zoomedIndex = this.zoomedImages.index(zoomedImage);
 
             var firstElement = Element.childElements(this.findLink(zoomedImage)).first();
+						if (firstElement == null) firstElement = this.findLink(zoomedImage);
             zoomedImage.style.width = firstElement.offsetWidth + "px";
             zoomedImage.style.height = firstElement.offsetHeight + "px";
 
