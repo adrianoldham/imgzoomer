@@ -32,7 +32,10 @@ ShadowMe.DefaultOptions = {
 
 ShadowMe.prototype = {
     initialize: function(options) {
+        options.theme = options.theme || {};
         var defaults = ShadowMe.DefaultOptions;
+        if (options.theme)
+            defaults.theme = options.theme.theme || defaults.theme;
         if (options) {
             var userTheme = options.theme;
             Object.extend(defaults.theme, userTheme);
@@ -235,7 +238,10 @@ ImgZoomer.prototype = {
         this.zoomedImages = new Array();
         this.imageSizes = new Array();
 
+        options.theme = options.theme || {};
         var defaults = ImgZoomer.DefaultOptions;
+        if (options.theme)
+            defaults.theme = options.theme.theme || defaults.theme;
         if (options) {
             var userTheme = options.theme;
             Object.extend(defaults.theme, userTheme);
