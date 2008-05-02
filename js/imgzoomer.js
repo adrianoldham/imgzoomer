@@ -11,6 +11,17 @@ Themes.Medium30 = {
 	spinner: "spinner.gif"
 };
 
+Themes.idevice = {
+windowTheme: "idevice",
+spinnerTheme: "black",
+imagePath: "../images/imgzoomer/",
+shadowTheme: "light",
+shadowThemeSize: 60,
+shadowDepth: 30,
+closeBox: "closebox.png",
+spinner: "spinner.gif"
+};
+
 // ShadowMe class that applys shadows to elements
 var ShadowMe = Class.create();
 
@@ -254,7 +265,7 @@ ImgZoomer.prototype = {
         this.loadingSpinner.hide();
 
         // create and add shadows
-        this.shadowMe = new ShadowMe();
+        this.shadowMe = new ShadowMe({ theme: this.options.theme });
         this.shadowHolder = this.shadowMe.shadowHolder;
         this.shadowHolder.style.zIndex = this.options.zIndex - 2;
 
