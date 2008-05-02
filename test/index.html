@@ -28,11 +28,11 @@
 	<a href="images/test2.jpg"><img src="images/thumb2.jpg" /></a>
 			
 	<script type="text/javascript" charset="utf-8">
-	    $('testShadow1').applyShadow();
-	    $('testShadow2').applyShadow();
+	    $('testShadow1').applyShadow({theme: { imagePath: "../images/imgzoomer/" }});
+	    $('testShadow2').applyShadow({theme: { imagePath: "../images/imgzoomer/" }});
 	    
 		var ImgZoomer = new ImgZoomer("a", {
-			theme: Themes.idevice
+			theme: { imagePath: "../images/imgzoomer/" }
 			});
 	</script>
 </body>

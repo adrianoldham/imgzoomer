@@ -3,18 +3,18 @@ var Themes = new Object();
 Themes.Medium30 = {
     windowTheme: "classic",
     spinnerTheme: "black",
-    imagePath: "../images/imgzoomer/",
-	shadowTheme: "medium",
-	shadowThemeSize: 30,
-	shadowDepth: 15,
-	closeBox: "closebox.png",
-	spinner: "spinner.gif"
+    imagePath: "/images/imgzoomer/",
+    shadowTheme: "medium",
+    shadowThemeSize: 30,
+    shadowDepth: 15,
+    closeBox: "closebox.png",
+    spinner: "spinner.gif"
 };
 
 Themes.idevice = {
 windowTheme: "idevice",
 spinnerTheme: "black",
-imagePath: "../images/imgzoomer/",
+imagePath: "/images/imgzoomer/",
 shadowTheme: "light",
 shadowThemeSize: 60,
 shadowDepth: 30,
@@ -27,13 +27,20 @@ var ShadowMe = Class.create();
 
 // Default ShadowMe options to use
 ShadowMe.DefaultOptions = {
-	theme: Themes.Medium30
+    theme: Themes.Medium30
 };
 
 ShadowMe.prototype = {
-	initialize: function(options) {
-		this.options = Object.extend(ShadowMe.DefaultOptions, options || {});
-		
+    initialize: function(options) {
+        var defaults = ShadowMe.DefaultOptions;
+        if (options) {
+            var userTheme = options.theme;
+            Object.extend(defaults.theme, userTheme);
+            options.theme = defaults.theme;
+        }
+        
+        this.options = Object.extend(defaults, options || {});
+        
         this.shadowHolder = new Element("div");
 
         for (var i = 1; i <= 8; i++) {
@@ -53,9 +60,9 @@ ShadowMe.prototype = {
         }
         
         return this;
-	},
-	
-	applyTo: function(element) {
+    },
+    
+    applyTo: function(element) {
         if (element.complete != null) {
             if (!element.complete) {
                 // if applying image to shadow and image width not know yet then wait until it is
@@ -63,7 +70,7 @@ ShadowMe.prototype = {
                 return this;
             }
         }
-	    
+        
         var absolutePosition = element.cumulativeOffset();
         var shadows = this.shadowHolder.childElements();
         
@@ -83,8 +90,8 @@ ShadowMe.prototype = {
         this.canShow = true;
         
         return this;
-	},
-	
+    },
+    
     positionShadow: function(shadow, x, y, width, height) {
         shadow.style.left = x + "px";
         shadow.style.top = y + "px";
@@ -225,7 +232,14 @@ ImgZoomer.prototype = {
         this.zoomedImages = new Array();
         this.imageSizes = new Array();
 
-        this.options = Object.extend(ImgZoomer.DefaultOptions, options || {});
+        var defaults = ImgZoomer.DefaultOptions;
+        if (options) {
+            var userTheme = options.theme;
+            Object.extend(defaults.theme, userTheme);
+            options.theme = defaults.theme;
+        }
+        
+        this.options = Object.extend(defaults, options || {});
 
         // styling defaults
         this.options.imgZoomerClass = this.options.imgZoomerClass || "imgZoomer";
@@ -323,7 +337,7 @@ ImgZoomer.prototype = {
             // add event for activating zoom function
             e.onclick = this.preload.bindAsEventListener(this, zoomedImage);
         }
-    },
+    },    
 
     resetImage: function(zoomedImage, clickedImage) {
         if (zoomedImage == clickedImage || zoomedImage.style.display == "none") return;
