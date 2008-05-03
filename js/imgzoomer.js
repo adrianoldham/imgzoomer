@@ -36,6 +36,7 @@ Themes.idevice = {
     duration: 0.35,
     fadeDuration: 0.25,
     toggleDuration: 0.29,
+    videoPath: "/video/",
     videoPlayerName: "FLVPlayer_Progressive.swf",
     videoSkinName: "Halo_Skin_3"
 };
