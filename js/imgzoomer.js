@@ -8,38 +8,21 @@ Themes.Default = {
     shadowThemeSize: 30,
     shadowDepth: 15,
     closeBox: "closebox.png",
-<<<<<<< .mine
+    zIndex: 10000,
+    shadowClass: "shadowMe",
     spinner: "spinner.gif",
     videoPath: "/video/",
     videoPlayerName: "FLVPlayer_Progressive.swf",
     videoSkinName: "Halo_Skin_3"
-=======
-    loadingSpinner: "spinner.gif",
-    zIndex: 10000,
-    shadowClass: "shadowMe"
 };
 
 Themes.DefaultShadows = {
     shadowTheme: "dark",
     shadowThemeSize: 30,
     shadowDepth: 15
->>>>>>> .r59
 };
 
 Themes.idevice = {
-<<<<<<< .mine
-    windowTheme: "idevice",
-    spinnerTheme: "black",
-    imagePath: "/images/imgzoomer/",
-    shadowTheme: "light",
-    shadowThemeSize: 60,
-    shadowDepth: 30,
-    closeBox: "closebox.png",
-    spinner: "spinner.gif",
-    videoPath: "/video/",
-    videoPlayerName: "FLVPlayer_Progressive.swf",
-    videoSkinName: "Halo_Skin_3"
-=======
     windowTheme: "idevice",
     spinnerTheme: "black",
     imagePath: "/images/imgzoomer/",
@@ -52,8 +35,9 @@ Themes.idevice = {
     shadowClass: "shadowMe",
     duration: 0.35,
     fadeDuration: 0.25,
-    toggleDuration: 0.29
->>>>>>> .r59
+    toggleDuration: 0.29,
+    videoPlayerName: "FLVPlayer_Progressive.swf",
+    videoSkinName: "Halo_Skin_3"
 };
 
 // ShadowMe class that applys shadows to elements
@@ -270,7 +254,9 @@ ImgZoomer.DefaultOptions = {
     shadowClass: "shadowMe",
     duration: 0.5,
     fadeDuration: 0.25,
-    toggleDuration: 0.29
+    toggleDuration: 0.29,
+    shadows: true,
+    imgZoomerClass: 'imgZoomer',
 };
 
 ImgZoomer.prototype = {
