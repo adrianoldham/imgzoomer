@@ -8,6 +8,12 @@ Themes.Default = {
     shadowThemeSize: 30,
     shadowDepth: 15,
     closeBox: "closebox.png",
+<<<<<<< .mine
+    spinner: "spinner.gif",
+    videoPath: "/video/",
+    videoPlayerName: "FLVPlayer_Progressive.swf",
+    videoSkinName: "Halo_Skin_3"
+=======
     loadingSpinner: "spinner.gif",
     zIndex: 10000,
     shadowClass: "shadowMe"
@@ -17,9 +23,23 @@ Themes.DefaultShadows = {
     shadowTheme: "dark",
     shadowThemeSize: 30,
     shadowDepth: 15
+>>>>>>> .r59
 };
 
 Themes.idevice = {
+<<<<<<< .mine
+    windowTheme: "idevice",
+    spinnerTheme: "black",
+    imagePath: "/images/imgzoomer/",
+    shadowTheme: "light",
+    shadowThemeSize: 60,
+    shadowDepth: 30,
+    closeBox: "closebox.png",
+    spinner: "spinner.gif",
+    videoPath: "/video/",
+    videoPlayerName: "FLVPlayer_Progressive.swf",
+    videoSkinName: "Halo_Skin_3"
+=======
     windowTheme: "idevice",
     spinnerTheme: "black",
     imagePath: "/images/imgzoomer/",
@@ -33,6 +53,7 @@ Themes.idevice = {
     duration: 0.35,
     fadeDuration: 0.25,
     toggleDuration: 0.29
+>>>>>>> .r59
 };
 
 // ShadowMe class that applys shadows to elements
@@ -100,7 +121,7 @@ ShadowMe.prototype = {
         this.canShow = true;
 
         if (!isNaN(element.style.zIndex))
-            this.shadowHolder.style.zIndex = element.style.zIndex - 2;
+            this.shadowHolder.style.zIndex = element.style.zIndex - 3;
 
         return this;
     },
@@ -207,7 +228,10 @@ Array.prototype.include = function(val) {
     return this.index(val) !== null;
 };
 
+String.prototype.trim = function() { return this.replace(/^\s+|\s+$/, ''); };
+
 var IMAGE_FORMATS = ["png", "jpg", "jpeg", "gif", "tif", "tiff", "bmp"];
+var FLASH_FORMATS = ["flv", "swf"];
 
 /*
 Image Zoomer Class
@@ -230,6 +254,7 @@ shadowThemeSize - The actual shadow image file dimensions in pixels
 imgZoomerClass - The CSS classname applied to the imgZoomer container
 zIndex - The topmost zIndex from which all others are derived
 */
+
 var ImgZoomer = Class.create();
 
 ImgZoomer.DefaultOptions = {
@@ -252,7 +277,8 @@ ImgZoomer.prototype = {
     initialize: function(linkSelector, options) {
         this.linkElements = new Array();
         this.zoomedImages = new Array();
-        this.imageSizes = new Array();
+        this.imageSizes   = new Array();
+        this.flashFlvs    = new Array();
 
         options.theme = options.theme || {};
         var defaults = ImgZoomer.DefaultOptions;
@@ -266,17 +292,9 @@ ImgZoomer.prototype = {
 
         this.options = Object.extend(defaults, options || {});
 
-        // styling defaults
-        this.options.imgZoomerClass = this.options.imgZoomerClass || "imgZoomer";
-        this.options.zIndex = this.options.zIndex || 10000;
-
         // no fading shadows for IE
         if (navigator.appName == "Microsoft Internet Explorer") {
             this.options.fadeDuration = 0;
-        }
-
-        if (this.options.shadows == null) {
-            this.options.shadows = true;
         }
 
         this.imgZoomer = new Element("div");
@@ -306,7 +324,7 @@ ImgZoomer.prototype = {
         // create and add shadows
         this.shadowMe = new ShadowMe({ theme: this.options.theme });
         this.shadowHolder = this.shadowMe.shadowHolder;
-        this.shadowHolder.style.zIndex = this.options.zIndex - 2;
+        this.shadowHolder.style.zIndex = this.options.zIndex - 3;
 
         // append our elements to the imgZoomer container
         this.imgZoomer.appendChild(this.closeBox);
@@ -329,20 +347,37 @@ ImgZoomer.prototype = {
 
     setupImage: function(e, link) {
         e = link;
+        
+        if (e.onclick != null) return;
+        
+        var zoomedImage;
+        var flashDiv;
 
         // if link is linked to an image then...
         if (IMAGE_FORMATS.include(e.href.split('.').last())) {
             // create the zoomed image element
-            var zoomedImage = new Image();
+            zoomedImage = new Image();
             zoomedImage.src = e.href;
             zoomedImage.alt = e.title;
             zoomedImage.title = e.title;
 
             Element.extend(zoomedImage);
-
+            
             // store them!
             this.linkElements.push(e);
             this.zoomedImages.push(zoomedImage);
+            
+            if (FLASH_FORMATS.include(e.rel.split('.').last())) {
+                flashDiv = new Element("div");
+
+                flashDiv.style.position = "absolute";
+                flashDiv.style.cursor = "pointer";
+                flashDiv.style.zIndex = this.options.zIndex - 1;
+                flashDiv.hide();
+                
+                this.flashFlvs[this.zoomedImages.index(zoomedImage)] = flashDiv;
+                this.imgZoomer.appendChild(flashDiv);
+            }
 
             var firstElement = this.findLink(zoomedImage).childElements().first();
             if (firstElement == null) firstElement = this.findLink(zoomedImage);
@@ -352,7 +387,7 @@ ImgZoomer.prototype = {
             zoomedImage.style.left = absolutePosition[0] + "px";
             zoomedImage.style.top = absolutePosition[1] + "px";
             zoomedImage.style.cursor = "pointer";
-            zoomedImage.style.zIndex = this.options.zIndex - 1;
+            zoomedImage.style.zIndex = this.options.zIndex - 2;
             zoomedImage.alt = e.title;
             zoomedImage.hide();
 
@@ -362,6 +397,23 @@ ImgZoomer.prototype = {
             // add event for activating zoom function
             e.onclick = this.preload.bindAsEventListener(this, zoomedImage);
         }
+    },
+    
+    insertFlash: function(element, src, size) {
+       var videoStreamName = src;
+
+       var videoObject =
+            '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,0,0" width="' + size.width + '" height="' + size.height + '" id="FLVPlayer">'
+            + '<param name="movie" value="' + this.options.theme.videoPath + this.options.theme.videoPlayerName + '" \/>'
+            + '<param name="salign" value="lt" \/>'
+            + '<param name="quality" value="high" \/>'
+            + '<param name="scale" value="noscale" \/>'
+            + '<param name="wmode" value="transparent" \/>'
+            + '<param name="FlashVars" value="&MM_ComponentVersion=1&skinName=' + this.options.theme.videoPath + 'components/' + this.options.theme.videoSkinName + '&streamName=' + videoStreamName + '&autoPlay=true&autoRewind=false" \/>'
+            + '<embed wmode="transparent" src="' + this.options.theme.videoPath + 'components/' + this.options.theme.videoPlayerName + '" flashvars="&MM_ComponentVersion=1&skinName=' + this.options.theme.videoPath + 'components/' + this.options.theme.videoSkinName + '&streamName=' + videoStreamName + '&autoPlay=true&autoRewind=false" quality="high" scale="noscale" width="' + size.width + '" height="' + size.height + '" name="FLVPlayer" salign="LT" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" \/>'
+            + '<\/object>'; 
+        
+        element.innerHTML = "<div>" + videoObject + "</div>";      
     },
 
     resetImage: function(zoomedImage, clickedImage) {
@@ -376,6 +428,13 @@ ImgZoomer.prototype = {
         zoomedImage.onclick = this.toggleImage.bindAsEventListener(this, zoomedImage);
 
         var absolutePosition = zoomedImage.cumulativeOffset();
+        
+        var flashDiv = this.flashFlvs[this.zoomedImages.index(zoomedImage)];
+        if (flashDiv != null) {
+            flashDiv.style.left = absolutePosition[0] + "px";
+            flashDiv.style.top = absolutePosition[1] + "px";
+            flashDiv.show();
+        }
 
         // opera required hack so that we can grab the images width and height
         this.closeBox.setOpacity(0);
@@ -431,6 +490,19 @@ ImgZoomer.prototype = {
             this.toggleImage(e, zoomedImage);
             this.preloader.stop();
             this.preloader = null;
+            
+            // add flash
+            var zoomedIndex = this.zoomedImages.index(zoomedImage);
+            var flashDiv = this.flashFlvs[this.zoomedImages.index(zoomedImage)];
+
+            if (flashDiv != null) {
+                var flashSize = { width: this.imageSizes[zoomedIndex][0], height: this.imageSizes[zoomedIndex][1] };
+                
+                flashDiv.style.width = flashSize.width + "px";
+                flashDiv.style.height = flashSize.height + "px";
+
+                this.insertFlash(flashDiv, this.findLink(zoomedImage).rel, flashSize);
+            }
         } else {
             if (Effect.Queues.get('imgzoomer').size() == 0) {
                 var windowInformation = this.getWindowInformation();
@@ -440,6 +512,11 @@ ImgZoomer.prototype = {
                 );
             }
         }
+    },
+    
+    closeFlash: function(zoomedImage) {
+        var flashDiv = this.flashFlvs[this.zoomedImages.index(zoomedImage)];
+        if (flashDiv != null) flashDiv.hide();
     },
 
     toggleImage: function(e, zoomedImage, duration) {
@@ -461,6 +538,8 @@ ImgZoomer.prototype = {
 
         // toggle zoom in or out
         if (zoomedImage.style.display != "none") {
+            this.closeFlash(zoomedImage)
+                    
             var linkElement = this.findLink(zoomedImage).childElements().first();
             if (linkElement == null) linkElement = this.findLink(zoomedImage);
             var absolutePosition = linkElement.cumulativeOffset();
