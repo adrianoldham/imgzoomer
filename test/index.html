@@ -1,39 +1,53 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 <html>
 <head>
-	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-	<title>index</title>
-	<script type="text/javascript" charset="utf-8" src="../lib/prototype.js"></script>
-	<script type="text/javascript" charset="utf-8" src="../lib/scriptaculous.js"></script>
-	<script type="text/javascript" charset="utf-8" src="../js/imgzoomer.js"></script>
-	
-	<style type="text/css" media="screen">
-		a img {
-			border-style: none;
-		}
-	</style>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <title>index</title>
+    <script type="text/javascript" charset="utf-8" src="../lib/prototype.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../lib/scriptaculous.js?load=effects"></script>
+    <script type="text/javascript" charset="utf-8" src="../js/imgzoomer.js"></script>
+    
+    <style type="text/css" media="screen">
+        a img {
+            border-style: none;
+            position: relative;
+            z-index: 1;
+        }
+        #testShadow1 {
+            position: relative;
+            z-index: 1;
+            width: 300px;
+            background-color: pink;
+            padding: 1px 20px 10px 20px;
+        }
+    </style>
 </head>
 <body>
-	<br/>
-	<br/>
-	<br/>
+    <br/>
+    <br/>
+    <br/>
     
-    <div id="testShadow1" style="width: 300px; height: 100px; background-color:pink; padding: 20px">
-        A shadow on a DIV
+    <div id="testShadow1">
+        <h1>Shadow DIV</h1>
+        <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Pellentesque nec dolor. Aliquam tincidunt accumsan velit. Mauris rhoncus suscipit arcu. Mauris ac velit. Sed dapibus pretium eros. Ut at erat eget massa pretium luctus. Nam vitae ante. Donec nisl magna, congue ac, congue sed, pharetra eget, eros. Nullam a dolor. Nunc nulla orci, vestibulum vel, dapibus nec, euismod sit amet, ante. Morbi adipiscing egestas nisi.</p>
     </div>
-	<a href="images/test.jpg">test</a>	
-	<a href="images/test.jpg"><img src="images/thumb.jpg" id="testShadow2" /></a>
-	<a href="images/test2.jpg"><img src="images/thumb2.jpg" /></a>
-			
-	<script type="text/javascript" charset="utf-8">
-	    $('testShadow1').applyShadow({theme: { imagePath: "../images/imgzoomer/" }});
-	    $('testShadow2').applyShadow({theme: { imagePath: "../images/imgzoomer/" }});
-	    
-		var ImgZoomer = new ImgZoomer("a", {
-			theme: { theme: Themes.Medium30, imagePath: "../images/imgzoomer/" }
-			});
-	</script>
+    <p><a href="images/test.jpg"><img src="images/thumb.jpg" id="testShadow2" /></a></p>
+    <p><a href="images/test2.jpg" class="zoomer2"><img src="images/thumb2.jpg" /></a></p>
+    <p><a href="images/test.jpg"><img src="images/thumb.jpg" /></a></p>
+    <p><a href="images/test.jpg">test</a></p>    
+            
+    <script type="text/javascript" charset="utf-8">
+        $('testShadow1').applyShadow({ theme: { imagePath: "../images/imgzoomer/" }});
+        $('testShadow2').applyShadow({ theme: { imagePath: "../images/imgzoomer/" }});
+        
+        var ImgZoomer1 = new ImgZoomer("a", {
+            theme: { theme: Themes.idevice, imagePath: "../images/imgzoomer/" }
+            });
+        var ImgZoomer2 = new ImgZoomer("a.zoomer2", {
+            theme: { windowTheme: "graphite", shadowTheme: "dark", imagePath: "../images/imgzoomer/" }
+            });
+    </script>
 </body>
 </html>

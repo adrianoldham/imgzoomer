@@ -1,25 +1,38 @@
 // A themes object that stores all our themes
 var Themes = new Object();
-Themes.Medium30 = {
+Themes.Default = {
     windowTheme: "classic",
     spinnerTheme: "black",
     imagePath: "/images/imgzoomer/",
-    shadowTheme: "medium",
+    shadowTheme: "dark",
     shadowThemeSize: 30,
     shadowDepth: 15,
     closeBox: "closebox.png",
-    spinner: "spinner.gif"
+    loadingSpinner: "spinner.gif",
+    zIndex: 10000,
+    shadowClass: "shadowMe"
+};
+
+Themes.DefaultShadows = {
+    shadowTheme: "dark",
+    shadowThemeSize: 30,
+    shadowDepth: 15
 };
 
 Themes.idevice = {
-windowTheme: "idevice",
-spinnerTheme: "black",
-imagePath: "/images/imgzoomer/",
-shadowTheme: "light",
-shadowThemeSize: 60,
-shadowDepth: 30,
-closeBox: "closebox.png",
-spinner: "spinner.gif"
+    windowTheme: "idevice",
+    spinnerTheme: "black",
+    imagePath: "/images/imgzoomer/",
+    shadowTheme: "dark",
+    shadowThemeSize: 60,
+    shadowDepth: 30,
+    closeBox: "closebox.png",
+    loadingSpinner: "spinner.gif",
+    zIndex: 10000,
+    shadowClass: "shadowMe",
+    duration: 0.35,
+    fadeDuration: 0.25,
+    toggleDuration: 0.29
 };
 
 // ShadowMe class that applys shadows to elements
@@ -27,7 +40,7 @@ var ShadowMe = Class.create();
 
 // Default ShadowMe options to use
 ShadowMe.DefaultOptions = {
-    theme: Themes.Medium30
+    theme: Themes.Default
 };
 
 ShadowMe.prototype = {
@@ -41,30 +54,24 @@ ShadowMe.prototype = {
             Object.extend(defaults.theme, userTheme);
             options.theme = defaults.theme;
         }
-        
+
         this.options = Object.extend(defaults, options || {});
-        
+
         this.shadowHolder = new Element("div");
+        this.shadowHolder.addClassName(this.options.theme.shadowClass);
 
         for (var i = 1; i <= 8; i++) {
             var shadow = Element.extend(new Image());
-
-            shadow.src = 
-                this.options.theme.imagePath +
-                "shadow/" +
-                this.options.theme.shadowThemeSize +"/" +
-                this.options.theme.shadowTheme +
-                "/shadow_" + i + ".png";
-            
+            shadow.src = this.options.theme.imagePath + "shadow/" + this.options.theme.shadowThemeSize + "/" + this.options.theme.shadowTheme + "/shadow_" + i + ".png";
             shadow.style.position = "absolute";
             shadow.hide();
 
             this.shadowHolder.appendChild(shadow);
         }
-        
+
         return this;
     },
-    
+
     applyTo: function(element) {
         if (element.complete != null) {
             if (!element.complete) {
@@ -73,10 +80,10 @@ ShadowMe.prototype = {
                 return this;
             }
         }
-        
+
         var absolutePosition = element.cumulativeOffset();
         var shadows = this.shadowHolder.childElements();
-        
+
         var size = { width: element.getWidth(), height: element.getHeight() };
 
         this.positionShadow(shadows[0], absolutePosition[0] - this.options.theme.shadowDepth, absolutePosition[1] - this.options.theme.shadowDepth, this.options.theme.shadowThemeSize, this.options.theme.shadowThemeSize);
@@ -89,15 +96,15 @@ ShadowMe.prototype = {
         this.positionShadow(shadows[5], absolutePosition[0] - this.options.theme.shadowDepth, absolutePosition[1] + size.height - this.options.theme.shadowThemeSize + this.options.theme.shadowDepth, this.options.theme.shadowThemeSize, this.options.theme.shadowThemeSize);
         this.positionShadow(shadows[6], absolutePosition[0] + this.options.theme.shadowThemeSize - this.options.theme.shadowDepth, absolutePosition[1] - this.options.theme.shadowThemeSize + this.options.theme.shadowDepth + size.height, size.width - (this.options.theme.shadowThemeSize * 2) + (this.options.theme.shadowDepth * 2), this.options.theme.shadowThemeSize);
         this.positionShadow(shadows[7], absolutePosition[0] + size.width - this.options.theme.shadowThemeSize + this.options.theme.shadowDepth, absolutePosition[1] - this.options.theme.shadowThemeSize + this.options.theme.shadowDepth + size.height, this.options.theme.shadowThemeSize, this.options.theme.shadowThemeSize);
-        
+
         this.canShow = true;
 
         if (!isNaN(element.style.zIndex))
             this.shadowHolder.style.zIndex = element.style.zIndex - 2;
-        
+
         return this;
     },
-    
+
     positionShadow: function(shadow, x, y, width, height) {
         shadow.style.left = x + "px";
         shadow.style.top = y + "px";
@@ -105,23 +112,23 @@ ShadowMe.prototype = {
         if (width != null) shadow.style.width = width + "px";
         if (height != null) shadow.style.height = height + "px";
     },
-    
+
     appendToDom: function(appendTo) {
         (appendTo || document.body).appendChild(this.shadowHolder);
         return this;
     },
-    
+
     show: function() {
         // only show when we can
         if (!this.canShow) {
             setTimeout(this.show.bind(this), 100);
             return this;
         }
-        
+
         this.shadowHolder.childElements().each(function(shadow) {
-           shadow.show(); 
+           shadow.show();
         });
-        
+
         return this;
     }
 };
@@ -219,17 +226,26 @@ windowTheme - The widget theme, included themes are "classic, graphite, idevice,
 spinnerTheme - The loading spinner theme, included themes are "black, white"
 shadowTheme - The shadow theme name, included themes are "light, medium or dark"
 shadowDepth - The visible portion of shadow file displayed in pixels
-shadowThemeSize - The actual shadow imge file dimensions in pixels
+shadowThemeSize - The actual shadow image file dimensions in pixels
 imgZoomerClass - The CSS classname applied to the imgZoomer container
 zIndex - The topmost zIndex from which all others are derived
 */
 var ImgZoomer = Class.create();
 
 ImgZoomer.DefaultOptions = {
-  duration: 0.5,
-  fadeDuration: 0.25,
-  toggleDuration: 0.29,
-  theme: Themes.Medium30
+    windowTheme: "classic",
+    spinnerTheme: "black",
+    imagePath: "/images/imgzoomer/",
+    shadowTheme: "medium",
+    shadowThemeSize: 30,
+    shadowDepth: 15,
+    closeBox: "closebox.png",
+    loadingSpinner: "spinner.gif",
+    zIndex: 10000,
+    shadowClass: "shadowMe",
+    duration: 0.5,
+    fadeDuration: 0.25,
+    toggleDuration: 0.29
 };
 
 ImgZoomer.prototype = {
@@ -247,7 +263,7 @@ ImgZoomer.prototype = {
             Object.extend(defaults.theme, userTheme);
             options.theme = defaults.theme;
         }
-        
+
         this.options = Object.extend(defaults, options || {});
 
         // styling defaults
@@ -283,7 +299,7 @@ ImgZoomer.prototype = {
         Element.extend(this.closeBox);
         Element.extend(this.loadingSpinner);
         Element.extend(this.imgZoomer);
-             
+
         this.closeBox.hide();
         this.loadingSpinner.hide();
 
@@ -346,7 +362,7 @@ ImgZoomer.prototype = {
             // add event for activating zoom function
             e.onclick = this.preload.bindAsEventListener(this, zoomedImage);
         }
-    },    
+    },
 
     resetImage: function(zoomedImage, clickedImage) {
         if (zoomedImage == clickedImage || zoomedImage.style.display == "none") return;
@@ -450,7 +466,7 @@ ImgZoomer.prototype = {
             var absolutePosition = linkElement.cumulativeOffset();
 
             // hide shadows and close box first
-            new Effect.Parallel(effects, { 
+            new Effect.Parallel(effects, {
                 duration: this.options.fadeDuration,
                 queue: { position: "end", scope: "imgzoomer" }
             });
