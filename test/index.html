@@ -9,7 +9,7 @@
     <script type="text/javascript" charset="utf-8" src="../lib/scriptaculous.js?load=effects"></script>
     <script type="text/javascript" charset="utf-8" src="../js/imgzoomer.js"></script>
     
-	<style type="text/css">
+    <style type="text/css">
         a img {
             border-style: none;
             position: relative;
@@ -21,7 +21,7 @@
             background-color: pink;
             padding: 1px 20px 10px 20px;
         }
-	</style>
+    </style>
 
 </head>
 <body>
@@ -40,11 +40,11 @@
     <p><a href="images/test.jpg" class="zoomer1">test</a></p>    
     
     <!-- Flash test -->
-	<a href="flvs/test.png" class="zoomer1" rel="../flvs/test.flv"><img src="images/thumb2.jpg" /></a>	
-	<a href="flvs/test.png" class="zoomer1" rel="../flvs/test.flv">test me</a>
+    <p><a href="flvs/test.png" class="zoomer1" rel="../flvs/test.flv"><img src="images/thumb2.jpg" /></a></p>
+    <p><a href="flvs/test.png" class="zoomer1" rel="../flvs/test.flv">test me</a></p>
             
     <script type="text/javascript" charset="utf-8">
-    	function runTest() {
+        function runTest() {
             $('testShadow1').applyShadow({ imagePath: "../images/imgzoomer/" });
             $('testShadow2').applyShadow({ imagePath: "../images/imgzoomer/" });
 
@@ -54,8 +54,8 @@
                 videoPath: "video/"
             });
             var ImgZoomer2 = new ImgZoomer("a.zoomer2", { imagePath: "../images/imgzoomer/", shadows: false });
-    	}  
-    	Event.observe(window, "load", runTest);
+        }  
+        Event.observe(window, "load", runTest);
     </script>
 </body>
 </html>
