@@ -388,17 +388,18 @@ ImgZoomer.prototype = {
        var videoStreamName = src;
 
        var videoObject =
-       '<div><object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" width="' + size.width + '" height="' + size.height + '" id="FLVPlayer">' +
+       '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" width="' + size.width + '" height="' + size.height + '" id="FLVPlayer">' +
        '<param name="movie" value="' + this.options.theme.videoPath + this.options.theme.videoPlayerName + '" />' +
        '<param name="salign" value="lt" />' +
        '<param name="quality" value="high" />' +
        '<param name="wmode" value="transparent" />' +
-       '<param name="FlashVars" value="&MM_ComponentVersion=1&skinName=' + this.options.theme.videoPath + this.options.theme.videoSkinName + '&streamName=' + videoStreamName + '&autoPlay=' + this.options.theme.videoAutoPlay + '&autoRewind=false" />' +
+       '<param name="flashvars" value="&MM_ComponentVersion=1&skinName=' + this.options.theme.videoPath + this.options.theme.videoSkinName + '&streamName=' + videoStreamName + '&autoPlay=' + this.options.theme.videoAutoPlay + '&autoRewind=false" />' +
        '<embed src="' + this.options.theme.videoPath + this.options.theme.videoPlayerName + '" flashvars="&MM_ComponentVersion=1&skinName=' + this.options.theme.videoPath + this.options.theme.videoSkinName + '&streamName=' + videoStreamName + '&autoPlay=' + this.options.theme.videoAutoPlay + '&autoRewind=false" quality="high" width="' + size.width + '" height="' + size.height + '" name="FLVPlayer" salign="LT" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" wmode="transparent" />' +
        '</embed>' +
-       '</object></div>'
+       '</object>'
         
-        element.innerHTML = "<div>" + videoObject + "</div>";
+        //element.innerHTML = "<div><div>" + videoObject + "</div></div>";
+        element.innerHTML = videoObject;
     },
 
     resetImage: function(zoomedImage, clickedImage) {
