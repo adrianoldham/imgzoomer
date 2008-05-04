@@ -40,8 +40,8 @@
     <p><a href="images/test.jpg" class="zoomer1">test</a></p>    
     
     <!-- Flash test -->
-	<a href="flvs/test.png" class="zoomer1" rel="flvs/test.flv"><img src="images/thumb2.jpg" /></a>	
-	<a href="flvs/test.png" class="zoomer1" rel="flvs/test.flv">test me</a>
+	<a href="flvs/test.png" class="zoomer1" rel="../flvs/test.flv"><img src="images/thumb2.jpg" /></a>	
+	<a href="flvs/test.png" class="zoomer1" rel="../flvs/test.flv">test me</a>
             
     <script type="text/javascript" charset="utf-8">
     	function runTest() {
@@ -49,9 +49,11 @@
             $('testShadow2').applyShadow({ imagePath: "../images/imgzoomer/" });
 
             var ImgZoomer1 = new ImgZoomer("a.zoomer1", {
-                theme: Themes.idevice, imagePath: "../images/imgzoomer/"
+                theme: Themes.idevice,
+                imagePath: "../images/imgzoomer/",
+                videoPath: "video/"
             });
-            var ImgZoomer2 = new ImgZoomer("a.zoomer2", { imagePath: "../images/imgzoomer/" });
+            var ImgZoomer2 = new ImgZoomer("a.zoomer2", { imagePath: "../images/imgzoomer/", shadows: false });
     	}  
     	Event.observe(window, "load", runTest);
     </script>
