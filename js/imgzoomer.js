@@ -7,7 +7,7 @@ Themes.Default = {
     shadowTheme: "light",
     shadowThemeSize: 30,
     shadowDepth: 15,
-    shadowClass: "shadowMe"
+    shadowClass: "shadowMe",
     shadows: true,
     closeBox: "closebox.png",
     spinner: "spinner.gif",
