@@ -13,6 +13,7 @@ Themes.Default = {
     videoPath: "/video/",
     videoPlayerName: "FLVPlayer_Progressive.swf",
     videoSkinName: "Halo_Skin_3",
+    videoAutoPlay: false,
     duration: 0.5,
     fadeDuration: 0.25,
     toggleDuration: 0.17,
@@ -397,8 +398,8 @@ ImgZoomer.prototype = {
        '<param name="salign" value="lt" />' +
        '<param name="quality" value="high" />' +
        '<param name="wmode" value="transparent" />' +
-       '<param name="FlashVars" value="&MM_ComponentVersion=1&skinName=' + this.options.theme.videoPath + this.options.theme.videoSkinName + '&streamName=' + videoStreamName + '&autoPlay=false&autoRewind=false" />' +
-       '<embed src="video/FLVPlayer_Progressive.swf" flashvars="&MM_ComponentVersion=1&skinName=' + this.options.theme.videoPath + this.options.theme.videoSkinName + '&streamName=' + videoStreamName + '&autoPlay=false&autoRewind=false" quality="high" width="' + size.width + '" height="' + size.height + '" name="FLVPlayer" salign="LT" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" wmode="transparent" />' +
+       '<param name="FlashVars" value="&MM_ComponentVersion=1&skinName=' + this.options.theme.videoPath + this.options.theme.videoSkinName + '&streamName=' + videoStreamName + '&autoPlay=' + this.options.theme.videoAutoPlay + '&autoRewind=false" />' +
+       '<embed src="' + this.options.theme.videoPath + this.options.theme.videoPlayerName + '" flashvars="&MM_ComponentVersion=1&skinName=' + this.options.theme.videoPath + this.options.theme.videoSkinName + '&streamName=' + videoStreamName + '&autoPlay=' + this.options.theme.videoAutoPlay + '&autoRewind=false" quality="high" width="' + size.width + '" height="' + size.height + '" name="FLVPlayer" salign="LT" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" wmode="transparent" />' +
        '</embed>' +
        '</object></div>'
         
