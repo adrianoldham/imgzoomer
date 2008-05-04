@@ -39,10 +39,17 @@ var ShadowMe = Class.create();
 
 // Default ShadowMe options to use
 ShadowMe.DefaultOptions = {
+    zIndex: 100
 };
+
+ShadowMe.totalShadows = 0;
 
 ShadowMe.prototype = {
     initialize: function(options) {
+        if (options.zIndex == null) {
+            options.zIndex = ShadowMe.DefaultOptions.zIndex + ShadowMe.totalShadows;
+        }
+        
         this.options = Object.extend(Object.extend({ }, ShadowMe.DefaultOptions), options || { });        
         this.options.theme = Themes.Default;
         
@@ -59,10 +66,14 @@ ShadowMe.prototype = {
             var shadow = Element.extend(new Image());
             shadow.src = this.options.theme.imagePath + "shadow/" + this.options.theme.shadowThemeSize + "/" + this.options.theme.shadowTheme + "/shadow_" + i + ".png";
             shadow.style.position = "absolute";
+            shadow.style.zIndex = this.options.zIndex;
             shadow.hide();
 
             this.shadowHolder.appendChild(shadow);
         }
+        
+        this.shadowHolder.style.zIndex = this.options.zIndex;
+        ShadowMe.totalShadows++;
 
         return this;
     },
@@ -75,9 +86,22 @@ ShadowMe.prototype = {
                 return this;
             }
         }
-
+        
         var absolutePosition = element.cumulativeOffset();
-        var shadows = this.shadowHolder.childElements();
+        var shadows = this.shadowHolder.childElements();        
+        
+        if (element.getStyle("position") != "absolute") {
+            element.style.position = "relative";
+        }
+        
+        if (element.style.zIndex != "") {
+            this.shadowHolder.style.zIndex = element.getStyle("zIndex") - 1;
+            shadows.each(function(s) {
+               s.style.zIndex = this.shadowHolder.getStyle("zIndex");
+            }.bind(this));
+        } else {
+            element.style.zIndex = this.options.zIndex + 1;
+        }
 
         var size = { width: element.getWidth(), height: element.getHeight() };
 
@@ -288,9 +312,8 @@ ImgZoomer.prototype = {
         this.loadingSpinner.hide();
 
         // create and add shadows
-        this.shadowMe = new ShadowMe({ theme: this.options.theme });
+        this.shadowMe = new ShadowMe({ theme: this.options.theme, zIndex: this.options.zIndex - 3 });
         this.shadowHolder = this.shadowMe.shadowHolder;
-        this.shadowHolder.style.zIndex = this.options.zIndex - 3;
 
         // append our elements to the imgZoomer container
         this.imgZoomer.appendChild(this.closeBox);
