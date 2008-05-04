@@ -4,11 +4,12 @@ Themes.Default = {
     windowTheme: "classic",
     spinnerTheme: "black",
     imagePath: "/images/imgzoomer/",
-    shadowTheme: "dark",
+    shadowTheme: "light",
     shadowThemeSize: 30,
     shadowDepth: 15,
+    shadowClass: "shadowMe"
+    shadows: true,
     closeBox: "closebox.png",
-    shadowClass: "shadowMe",
     spinner: "spinner.gif",
     videoPath: "/video/",
     videoPlayerName: "FLVPlayer_Progressive.swf",
@@ -16,26 +17,20 @@ Themes.Default = {
     videoAutoPlay: false,
     duration: 0.5,
     fadeDuration: 0.25,
-    toggleDuration: 0.17,
-    shadows: true
-};
-
-Themes.DefaultShadows = {
-    shadowTheme: "dark",
-    shadowThemeSize: 30,
-    shadowDepth: 15
+    toggleDuration: 0.3
 };
 
 Themes.idevice = {
     windowTheme: "idevice",
+    shadowTheme: "dark",
     shadowThemeSize: 60,
     shadowDepth: 30,
     duration: 0.35,
-    fadeDuration: 0.25,
-    toggleDuration: 0.29
+    fadeDuration: 0.2,
+    toggleDuration: 0.3
 };
 
-// ShadowMe class that applys shadows to elements
+// ShadowMe class that applies shadows to elements
 var ShadowMe = Class.create();
 
 // Default ShadowMe options to use
