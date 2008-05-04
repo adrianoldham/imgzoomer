@@ -44,15 +44,13 @@
 	<a href="flvs/test.png" rel="flvs/test.flv">test me</a>
             
     <script type="text/javascript" charset="utf-8">
-        $('testShadow1').applyShadow({ theme: { imagePath: "../images/imgzoomer/" }});
-        $('testShadow2').applyShadow({ theme: { imagePath: "../images/imgzoomer/" }});
+        $('testShadow1').applyShadow({ imagePath: "../images/imgzoomer/" });
+        $('testShadow2').applyShadow({ imagePath: "../images/imgzoomer/" });
         
         var ImgZoomer1 = new ImgZoomer("a", {
-            theme: { theme: Themes.idevice, imagePath: "../images/imgzoomer/" }
-            });
-        var ImgZoomer2 = new ImgZoomer("a.zoomer2", {
-            theme: { windowTheme: "graphite", shadowTheme: "dark", imagePath: "../images/imgzoomer/" }
-            });
+            theme: Themes.idevice, imagePath: "../images/imgzoomer/"
+        });
+        var ImgZoomer2 = new ImgZoomer("a.zoomer2", { imagePath: "../images/imgzoomer/" });
     </script>
 </body>
 </html>

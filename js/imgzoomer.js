@@ -8,12 +8,15 @@ Themes.Default = {
     shadowThemeSize: 30,
     shadowDepth: 15,
     closeBox: "closebox.png",
-    zIndex: 10000,
     shadowClass: "shadowMe",
     spinner: "spinner.gif",
     videoPath: "/video/",
     videoPlayerName: "FLVPlayer_Progressive.swf",
-    videoSkinName: "Halo_Skin_3"
+    videoSkinName: "Halo_Skin_3",
+    duration: 0.5,
+    fadeDuration: 0.25,
+    toggleDuration: 0.17,
+    shadows: true
 };
 
 Themes.DefaultShadows = {
@@ -24,21 +27,11 @@ Themes.DefaultShadows = {
 
 Themes.idevice = {
     windowTheme: "idevice",
-    spinnerTheme: "black",
-    imagePath: "/images/imgzoomer/",
-    shadowTheme: "dark",
     shadowThemeSize: 60,
     shadowDepth: 30,
-    closeBox: "closebox.png",
-    loadingSpinner: "spinner.gif",
-    zIndex: 10000,
-    shadowClass: "shadowMe",
     duration: 0.35,
     fadeDuration: 0.25,
-    toggleDuration: 0.29,
-    videoPath: "/video/",
-    videoPlayerName: "FLVPlayer_Progressive.swf",
-    videoSkinName: "Halo_Skin_3"
+    toggleDuration: 0.29
 };
 
 // ShadowMe class that applys shadows to elements
@@ -46,22 +39,18 @@ var ShadowMe = Class.create();
 
 // Default ShadowMe options to use
 ShadowMe.DefaultOptions = {
-    theme: Themes.Default
 };
 
 ShadowMe.prototype = {
     initialize: function(options) {
-        options.theme = options.theme || {};
-        var defaults = ShadowMe.DefaultOptions;
-        if (options.theme)
-            defaults.theme = options.theme.theme || defaults.theme;
-        if (options) {
-            var userTheme = options.theme;
-            Object.extend(defaults.theme, userTheme);
-            options.theme = defaults.theme;
+        this.options = Object.extend(Object.extend({ }, ShadowMe.DefaultOptions), options || { });        
+        this.options.theme = Themes.Default;
+        
+        if (options.theme != null) {
+            Object.extend(this.options.theme, options.theme || {});
         }
-
-        this.options = Object.extend(defaults, options || {});
+        
+        Object.extend(this.options.theme, this.options || {});
 
         this.shadowHolder = new Element("div");
         this.shadowHolder.addClassName(this.options.theme.shadowClass);
@@ -243,21 +232,9 @@ zIndex - The topmost zIndex from which all others are derived
 var ImgZoomer = Class.create();
 
 ImgZoomer.DefaultOptions = {
-    windowTheme: "classic",
-    spinnerTheme: "black",
-    imagePath: "/images/imgzoomer/",
-    shadowTheme: "medium",
-    shadowThemeSize: 30,
-    shadowDepth: 15,
-    closeBox: "closebox.png",
-    loadingSpinner: "spinner.gif",
-    zIndex: 10000,
-    shadowClass: "shadowMe",
-    duration: 0.5,
-    fadeDuration: 0.25,
-    toggleDuration: 0.29,
-    shadows: true,
+    theme: null,
     imgZoomerClass: 'imgZoomer',
+    zIndex: 10000
 };
 
 ImgZoomer.prototype = {
@@ -266,22 +243,24 @@ ImgZoomer.prototype = {
         this.zoomedImages = new Array();
         this.imageSizes   = new Array();
         this.flashFlvs    = new Array();
-
-        options.theme = options.theme || {};
-        var defaults = ImgZoomer.DefaultOptions;
-        if (options.theme)
-            defaults.theme = options.theme.theme || defaults.theme;
-        if (options) {
-            var userTheme = options.theme;
-            Object.extend(defaults.theme, userTheme);
-            options.theme = defaults.theme;
+        
+        this.options = Object.extend(Object.extend({ }, ImgZoomer.DefaultOptions), options || { });        
+        this.options.theme = Themes.Default;
+        
+        if (options.theme != null) {
+            Object.extend(this.options.theme, options.theme || {});
         }
-
-        this.options = Object.extend(defaults, options || {});
+        
+        Object.extend(this.options.theme, this.options || {});
 
         // no fading shadows for IE
         if (navigator.appName == "Microsoft Internet Explorer") {
-            this.options.fadeDuration = 0;
+            this.options.theme.fadeDuration = 0;
+        }
+        
+        // if no shadow theme then disable shadows
+        if (this.options.theme.shadowTheme == null) {
+            this.options.theme.shadows = false;
         }
 
         this.imgZoomer = new Element("div");
@@ -407,7 +386,7 @@ ImgZoomer.prototype = {
         if (zoomedImage == clickedImage || zoomedImage.style.display == "none") return;
 
         // toggle any opened images and close them
-        this.toggleImage(null, zoomedImage, this.options.toggleDuration);
+        this.toggleImage(null, zoomedImage, this.options.theme.toggleDuration);
     },
 
     openCloseBox: function(e, zoomedImage) {
@@ -435,7 +414,7 @@ ImgZoomer.prototype = {
         var effects = new Array();
         effects.push(new Effect.Appear(this.closeBox, { sync: true }));
 
-        if (this.options.shadows) {
+        if (this.options.theme.shadows) {
             this.shadowMe.applyTo(zoomedImage);
 
             this.shadowHolder.childElements().each(function(shadow) {
@@ -446,7 +425,7 @@ ImgZoomer.prototype = {
 
         // show close box and shadows
         new Effect.Parallel(effects, {
-                duration: this.options.fadeDuration,
+                duration: this.options.theme.fadeDuration,
                 queue: { position: "end", scope: "imgzoomer" }
             }
         );
@@ -507,13 +486,13 @@ ImgZoomer.prototype = {
     },
 
     toggleImage: function(e, zoomedImage, duration) {
-        var duration = duration == null ? this.options.duration : duration;
+        var duration = duration == null ? this.options.theme.duration : duration;
 
         // create effects for fading close box and shadow
         var effects = [ new Effect.Fade(this.closeBox, { sync: true }) ];
 
         // fade shadows too if we have any
-        if (this.options.shadows) {
+        if (this.options.theme.shadows) {
             this.shadowHolder.childElements().each(function(shadow) {
                     effects.push(new Effect.Fade(shadow, { sync: true }));
                 }
@@ -533,7 +512,7 @@ ImgZoomer.prototype = {
 
             // hide shadows and close box first
             new Effect.Parallel(effects, {
-                duration: this.options.fadeDuration,
+                duration: this.options.theme.fadeDuration,
                 queue: { position: "end", scope: "imgzoomer" }
             });
 
@@ -550,7 +529,7 @@ ImgZoomer.prototype = {
                     queue: { position: "end", scope: "imgzoomer" }
                 }
             );
-        } else {
+        } else {    
             // always hide close box and shadows first
             new Effect.Parallel(effects, {
                     duration: 0,
