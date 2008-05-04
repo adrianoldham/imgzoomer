@@ -51,7 +51,7 @@ ShadowMe.prototype = {
         }
         
         this.options = Object.extend(Object.extend({ }, ShadowMe.DefaultOptions), options || { });        
-        this.options.theme = Themes.Default;
+        this.options.theme = Object.extend({ }, Themes.Default);
         
         if (options.theme != null) {
             Object.extend(this.options.theme, options.theme || {});
@@ -269,7 +269,7 @@ ImgZoomer.prototype = {
         this.flashFlvs    = new Array();
         
         this.options = Object.extend(Object.extend({ }, ImgZoomer.DefaultOptions), options || { });        
-        this.options.theme = Themes.Default;
+        this.options.theme = Object.extend({ }, Themes.Default);
         
         if (options.theme != null) {
             Object.extend(this.options.theme, options.theme || {});
