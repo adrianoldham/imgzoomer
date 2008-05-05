@@ -502,7 +502,10 @@ ImgZoomer.prototype = {
     
     closeFlash: function(zoomedImage) {
         var flashDiv = this.flashFlvs[this.zoomedImages.index(zoomedImage)];
-        if (flashDiv != null) flashDiv.hide();
+        if (flashDiv != null) {
+            flashDiv.hide();
+            flashDiv.innerHTML = "";
+        }
     },
 
     toggleImage: function(e, zoomedImage, duration) {
@@ -625,29 +628,29 @@ ImgZoomer.prototype = {
             // Non-IE
             windowWidth = window.innerWidth;
             windowHeight = window.innerHeight;
-        } else if (document.documentElement && (document.documentElement.clientWidth != null || document.documentElement.clientHeight != null)) {
+        } else if (!Object.isUndefined(document.documentElement) && (!Object.isUndefined(document.documentElement.clientWidth) || !Object.isUndefined(document.documentElement.clientHeight))) {
             // IE 6+ in 'standards compliant mode'
             windowWidth = document.documentElement.clientWidth;
             windowHeight = document.documentElement.clientHeight;
-        } else if (document.body && (document.body.clientWidth != null || document.body.clientHeight != null)) {
+        } else if (!Object.isUndefined(document.body) && (!Object.isUndefined(document.body.clientWidth) || !Object.isUndefined(document.body.clientHeight))) {
             // IE 4 compatible
             windowWidth = document.body.clientWidth;
             windowHeight = document.body.clientHeight;
         }
-
+        
         // get scroll position
         if (typeof( window.pageYOffset ) == 'number') {
             // Netscape compliant
             scrollY = window.pageYOffset;
             scrollX = window.pageXOffset;
-        } else if (document.body && ( document.body.scrollLeft != null || document.body.scrollTop != null)) {
-            // DOM compliant
-            scrollY = document.body.scrollTop;
-            scrollX = document.body.scrollLeft;
-        } else if (document.documentElement && ( document.documentElement.scrollLeft != null || document.documentElement.scrollTop != null)) {
+        } else if (!Object.isUndefined(document.documentElement) && (!Object.isUndefined(document.documentElement.scrollLeft) || !Object.isUndefined(document.documentElement.scrollTop))) {
             // IE6 standards compliant mode
             scrollY = document.documentElement.scrollTop;
             scrollX = document.documentElement.scrollLeft;
+        } else if (!Object.isUndefined(document.body) && (!Object.isUndefined(document.body.scrollLeft) || !Object.isUndefined(document.body.scrollTop))) {
+            // DOM compliant
+            scrollY = document.body.scrollTop;
+            scrollX = document.body.scrollLeft;
         }
 
         return { scrollX: scrollX, scrollY: scrollY, windowWidth: windowWidth, windowHeight: windowHeight };
