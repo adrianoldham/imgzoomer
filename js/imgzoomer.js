@@ -1,3 +1,37 @@
+// precheck if IE
+var isIE = (/MSIE (5\.5|6\.)/.test(navigator.userAgent) && navigator.platform == "Win32");
+
+Element.addMethods({ 
+    iePNGFix: function(element) {}
+})
+
+// Quick helper function to apply shadow to an element
+// returns the div holding the shadow elements
+Element.addMethods({ 
+    applyShadow: function(element, theme) {
+        return (new ShadowMe(theme)).applyTo(element).appendToDom().show().shadowHolder;
+    },
+    
+    iePNGFix: function(element, blankPixel) {
+        if (element.src == blankPixel) return;        
+        if (!isIE) return;
+        
+        // wait till image is preloaded
+        if (!element.complete) {
+            setTimeout(function(_element, _blankPixel) {
+                _element.iePNGFix(_blankPixel);
+            }.bind(this, element, blankPixel), 100);
+            
+            return;
+        }
+        
+        element.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + element.src + "',sizingMethod='scale')";
+        element.style.width = element.width + "px";
+        element.style.height = element.height + "px";
+        element.src = blankPixel || "/images/blank.gif";
+    }
+});
+
 // A themes object that stores all our themes
 var Themes = new Object();
 Themes.Default = {
@@ -11,6 +45,7 @@ Themes.Default = {
     shadows: true,
     closeBox: "closebox.png",
     spinner: "spinner.gif",
+    blankPixel: "blank.gif",
     videoPath: "/video/",
     videoPlayerName: "FLVPlayer_Progressive.swf",
     videoSkinName: "Halo_Skin_3",
@@ -63,6 +98,7 @@ ShadowMe.prototype = {
             shadow.src = this.options.theme.imagePath + "shadow/" + this.options.theme.shadowThemeSize + "/" + this.options.theme.shadowTheme + "/shadow_" + i + ".png";
             shadow.style.position = "absolute";
             shadow.style.zIndex = this.options.zIndex;
+            shadow.iePNGFix(this.options.theme.imagePath + "extras/" + this.options.theme.blankPixel);
             shadow.hide();
 
             this.shadowHolder.appendChild(shadow);
@@ -147,12 +183,6 @@ ShadowMe.prototype = {
         return this;
     }
 };
-
-// Quick helper function to apply shadow to an element
-// returns the div holding the shadow elements
-Element.addMethods({ applyShadow: function(element, theme) {
-    return (new ShadowMe(theme)).applyTo(element).appendToDom().show().shadowHolder;
-}});
 
 Effect.MoveAndResizeTo = Class.create(Effect.Base, {
     initialize: function(element, toTop, toLeft, toWidth, toHeight) {
@@ -303,6 +333,8 @@ ImgZoomer.prototype = {
         Element.extend(this.closeBox);
         Element.extend(this.loadingSpinner);
         Element.extend(this.imgZoomer);
+        
+        this.closeBox.iePNGFix(this.options.theme.imagePath + "extras/" + this.options.theme.blankPixel);
 
         this.closeBox.hide();
         this.loadingSpinner.hide();
@@ -408,6 +440,14 @@ ImgZoomer.prototype = {
         // toggle any opened images and close them
         this.toggleImage(null, zoomedImage, this.options.theme.toggleDuration);
     },
+    
+    positionCloseBox: function(zoomedImage) {
+        var absolutePosition = zoomedImage.cumulativeOffset();
+
+        // position the close box (top left of zoomed image)
+        this.closeBox.style.left = (absolutePosition[0] - this.closeBox.width / 2) + "px";
+        this.closeBox.style.top = (absolutePosition[1] - this.closeBox.height / 2) + "px";  
+    },
 
     openCloseBox: function(e, zoomedImage) {
         // once zoomed make it clickable
@@ -428,8 +468,7 @@ ImgZoomer.prototype = {
 
         // position the close box (top left of zoomed image)
         this.closeBox.onclick = this.toggleImage.bindAsEventListener(this, zoomedImage);
-        this.closeBox.style.left = (absolutePosition[0] - this.closeBox.width / 2) + "px";
-        this.closeBox.style.top = (absolutePosition[1] - this.closeBox.height / 2) + "px";
+        this.positionCloseBox(zoomedImage);
 
         var effects = new Array();
         effects.push(new Effect.Appear(this.closeBox, { sync: true }));
@@ -456,6 +495,74 @@ ImgZoomer.prototype = {
         this.loadingSpinner.style.top = (parentY + (parentHeight - this.loadingSpinner.height) / 2) + "px";
 
         this.loadingSpinner.show();
+    },
+    
+    centerInfo: function(zoomedImage) {
+        var windowInformation = this.getWindowInformation();
+
+        // declare move to and zooming variables
+        var moveToX, moveToY;
+        var scaleX, scaleY;
+
+        // work out where to zoom the image to
+        moveToX = windowInformation.scrollX;
+        moveToY = windowInformation.scrollY;
+
+        // scale to full size of the image
+        scaleX = zoomedImage.width;
+        scaleY = zoomedImage.height;
+
+        // get original size of the image
+        var zoomedIndex = this.zoomedImages.index(zoomedImage);
+
+        var firstElement = this.findLink(zoomedImage).childElements().first();
+        if (firstElement == null) firstElement = this.findLink(zoomedImage);
+        zoomedImage.style.width = firstElement.offsetWidth + "px";
+        zoomedImage.style.height = firstElement.offsetHeight + "px";
+
+        if (this.imageSizes[zoomedIndex] == null) {
+            this.imageSizes[zoomedIndex] = [scaleX, scaleY];
+        } else {
+            scaleX = this.imageSizes[zoomedIndex][0];
+            scaleY = this.imageSizes[zoomedIndex][1];
+        }
+
+        // option to set own offset to move to
+        if (this.options.offsetX == null) {
+            moveToX += (windowInformation.windowWidth - scaleX) / 2;
+        } else {
+            moveToX += this.options.offsetX;
+        }
+
+        if (this.options.offsetY == null) {
+            moveToY += (windowInformation.windowHeight - scaleY) / 2;
+        } else {
+            moveToY += this.options.offsetY;
+        }
+        
+        return { width: scaleX, height: scaleY, left: moveToX, top: moveToY };
+    },
+    
+    reposition: function(zoomedImage) {
+        if (Effect.Queues.get('imgzoomer').size() != 0) return;
+        var centerInformation = this.centerInfo(zoomedImage);
+        
+        zoomedImage.style.left = centerInformation.left + "px";
+        zoomedImage.style.top = centerInformation.top + "px";
+        zoomedImage.style.width = centerInformation.width + "px";
+        zoomedImage.style.height = centerInformation.height + "px";
+        
+        var zoomIndex = this.zoomedImages.index(zoomedImage);
+        var flashDiv = this.flashFlvs[zoomIndex]
+        if (flashDiv != null) {
+            flashDiv.style.left = centerInformation.left + "px";
+            flashDiv.style.top = centerInformation.top + "px";
+            flashDiv.style.width = centerInformation.width + "px";
+            flashDiv.style.height = centerInformation.height + "px";
+        }
+        
+        this.shadowMe.applyTo(zoomedImage);
+        this.positionCloseBox(zoomedImage);
     },
 
     preload: function(e, zoomedImage) {
@@ -527,6 +634,7 @@ ImgZoomer.prototype = {
 
         // toggle zoom in or out
         if (zoomedImage.style.display != "none") {
+            if (this.repositioner != null) this.repositioner.stop();
             this.closeFlash(zoomedImage)
                     
             var linkElement = this.findLink(zoomedImage).childElements().first();
@@ -552,7 +660,10 @@ ImgZoomer.prototype = {
                     queue: { position: "end", scope: "imgzoomer" }
                 }
             );
-        } else {    
+        } else {     
+            if (this.repositioner != null) this.repositioner.stop();
+            this.repositioner = new PeriodicalExecuter(this.reposition.bind(this, zoomedImage), 0.1);
+               
             // always hide close box and shadows first
             new Effect.Parallel(effects, {
                     duration: 0,
@@ -564,51 +675,11 @@ ImgZoomer.prototype = {
             zoomedImage.setOpacity(0);
             zoomedImage.show();
 
-            var windowInformation = this.getWindowInformation();
-
-            // declare move to and zooming variables
-            var moveToX, moveToY;
-            var scaleX, scaleY;
-
-            // work out where to zoom the image to
-            moveToX = windowInformation.scrollX;
-            moveToY = windowInformation.scrollY;
-
-            // scale to full size of the image
-            scaleX = zoomedImage.width;
-            scaleY = zoomedImage.height;
-
-            // get original size of the image
-            var zoomedIndex = this.zoomedImages.index(zoomedImage);
-
-            var firstElement = this.findLink(zoomedImage).childElements().first();
-            if (firstElement == null) firstElement = this.findLink(zoomedImage);
-            zoomedImage.style.width = firstElement.offsetWidth + "px";
-            zoomedImage.style.height = firstElement.offsetHeight + "px";
-
-            if (this.imageSizes[zoomedIndex] == null) {
-                this.imageSizes[zoomedIndex] = [scaleX, scaleY];
-            } else {
-                scaleX = this.imageSizes[zoomedIndex][0];
-                scaleY = this.imageSizes[zoomedIndex][1];
-            }
-
-            // option to set own offset to move to
-            if (this.options.offsetX == null) {
-                moveToX += (windowInformation.windowWidth - scaleX) / 2;
-            } else {
-                moveToX += this.options.offsetX;
-            }
-
-            if (this.options.offsetY == null) {
-                moveToY += (windowInformation.windowHeight - scaleY) / 2;
-            } else {
-                moveToY += this.options.offsetY;
-            }
+            var center = this.centerInfo(zoomedImage);
 
             new Effect.Parallel([
                     new Effect.Appear(zoomedImage, { sync: true }),
-                    new Effect.MoveAndResizeTo(zoomedImage, moveToY, moveToX, scaleX, scaleY, { sync: true })
+                    new Effect.MoveAndResizeTo(zoomedImage, center.top, center.left, center.width, center.height, { sync: true })
                 ], {
                     queue: { position: "end", scope: "imgzoomer" },
                     duration: duration,
