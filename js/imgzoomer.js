@@ -46,10 +46,6 @@ Themes.Default = {
     closeBox: "closebox.png",
     spinner: "spinner.gif",
     blankPixel: "blank.gif",
-    videoPath: "/video/",
-    videoPlayerName: "FLVPlayer_Progressive.swf",
-    videoSkinName: "Halo_Skin_3",
-    videoAutoPlay: false,
     duration: 0.5,
     fadeDuration: 0.25,
     toggleDuration: 0.3

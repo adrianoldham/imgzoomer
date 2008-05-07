@@ -1,3 +1,10 @@
+Object.extend(Themes.Default, {
+    videoPath: "/video/",
+    videoPlayerName: "FLVPlayer_Progressive.swf",
+    videoSkinName: "Halo_Skin_3",
+    videoAutoPlay: false
+});
+
 Object.extend(ImgZoomer.plugins, {
     flvPlayer: {
         // setup is used to analyse the anchor element and produce a special content div
