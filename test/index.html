@@ -8,6 +8,7 @@
     <script type="text/javascript" charset="utf-8" src="../lib/prototype.js"></script>
     <script type="text/javascript" charset="utf-8" src="../lib/scriptaculous.js?load=effects"></script>
     <script type="text/javascript" charset="utf-8" src="../js/imgzoomer.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../js/plugins/flashzoomer.js"></script>
     
     <style type="text/css">
         a img {
@@ -41,7 +42,7 @@
     
     <!-- Flash test -->
     <p><a href="flvs/test.png" class="zoomer1" rel="../flvs/test.flv"><img src="images/thumb2.jpg" /></a></p>
-    <p><a href="flvs/test.png" class="zoomer1" rel="../flvs/test.flv">test me</a></p>
+    <p><a href="flvs/test.png" class="zoomer2" rel="../flvs/test.flv">test me</a></p>
             
     <script type="text/javascript" charset="utf-8">
         function runTest() {
@@ -53,7 +54,9 @@
                 imagePath: "../images/imgzoomer/",
                 videoPath: "video/"
             });
-            var ImgZoomer2 = new ImgZoomer("a.zoomer2", { imagePath: "../images/imgzoomer/", shadows: false });
+            var ImgZoomer2 = new ImgZoomer("a.zoomer2", {
+                imagePath: "../images/imgzoomer/"
+            });
         }  
         Event.observe(window, "load", runTest);
     </script>
