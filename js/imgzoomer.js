@@ -612,7 +612,7 @@ ImgZoomer.prototype = {
         // toggle zoom in or out
         if (zoomedImage.style.display != "none") {
             if (this.repositioner != null) this.repositioner.stop();
-            this.closeContent(zoomedImage)
+            this.closeContent(zoomedImage);
                     
             var linkElement = this.findLink(zoomedImage).childElements().first();
             if (linkElement == null) linkElement = this.findLink(zoomedImage);
@@ -703,6 +703,6 @@ ImgZoomer.prototype = {
 
         return { scrollX: scrollX, scrollY: scrollY, windowWidth: windowWidth, windowHeight: windowHeight };
     }
-}
+};
 
 ImgZoomer.plugins = {};
