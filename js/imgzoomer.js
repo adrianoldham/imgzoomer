@@ -555,7 +555,7 @@ ImgZoomer.prototype = {
         if (zoomedImage.complete) {
             this.loadingSpinner.hide();
             this.toggleImage(e, zoomedImage);
-            this.preloader.stop();
+            if (this.preloader != null) this.preloader.stop();
             this.preloader = null;
             
             // add flash
