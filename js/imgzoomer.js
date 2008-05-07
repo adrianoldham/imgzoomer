@@ -3,7 +3,7 @@ var isIE = (/MSIE (5\.5|6\.)/.test(navigator.userAgent) && navigator.platform ==
 
 Element.addMethods({ 
     iePNGFix: function(element) {}
-})
+});
 
 // Quick helper function to apply shadow to an element
 // returns the div holding the shadow elements
@@ -428,7 +428,7 @@ ImgZoomer.prototype = {
        '<param name="flashvars" value="&MM_ComponentVersion=1&skinName=' + this.options.theme.videoPath + this.options.theme.videoSkinName + '&streamName=' + videoStreamName + '&autoPlay=' + this.options.theme.videoAutoPlay + '&autoRewind=false" />' +
        '<embed src="' + this.options.theme.videoPath + this.options.theme.videoPlayerName + '" flashvars="&MM_ComponentVersion=1&skinName=' + this.options.theme.videoPath + this.options.theme.videoSkinName + '&streamName=' + videoStreamName + '&autoPlay=' + this.options.theme.videoAutoPlay + '&autoRewind=false" quality="high" width="' + size.width + '" height="' + size.height + '" name="FLVPlayer" salign="LT" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" wmode="transparent" />' +
        '</embed>' +
-       '</object>'
+       '</object>';
         
         //element.innerHTML = "<div><div>" + videoObject + "</div></div>";
         element.innerHTML = videoObject;
@@ -553,7 +553,7 @@ ImgZoomer.prototype = {
         zoomedImage.style.height = centerInformation.height + "px";
         
         var zoomIndex = this.zoomedImages.index(zoomedImage);
-        var flashDiv = this.flashFlvs[zoomIndex]
+        var flashDiv = this.flashFlvs[zoomIndex];
         if (flashDiv != null) {
             flashDiv.style.left = centerInformation.left + "px";
             flashDiv.style.top = centerInformation.top + "px";
@@ -635,7 +635,7 @@ ImgZoomer.prototype = {
         // toggle zoom in or out
         if (zoomedImage.style.display != "none") {
             if (this.repositioner != null) this.repositioner.stop();
-            this.closeFlash(zoomedImage)
+            this.closeFlash(zoomedImage);
                     
             var linkElement = this.findLink(zoomedImage).childElements().first();
             if (linkElement == null) linkElement = this.findLink(zoomedImage);
@@ -726,4 +726,4 @@ ImgZoomer.prototype = {
 
         return { scrollX: scrollX, scrollY: scrollY, windowWidth: windowWidth, windowHeight: windowHeight };
     }
-}
+};
