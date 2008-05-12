@@ -72,13 +72,13 @@ ShadowMe.DefaultOptions = {
 ShadowMe.totalShadows = 0;
 
 ShadowMe.prototype = {
-    initialize: function(options) {
-        if (options.zIndex == null) {
-            options.zIndex = ShadowMe.DefaultOptions.zIndex + ShadowMe.totalShadows;
-        }
-        
+    initialize: function(options) {        
         this.options = Object.extend(Object.extend({ }, ShadowMe.DefaultOptions), options || { });        
         this.options.theme = Object.extend({ }, Themes.Default);
+        
+        if (this.options.zIndex == null) {
+            this.options.zIndex = ShadowMe.DefaultOptions.zIndex + ShadowMe.totalShadows;
+        }
         
         if (!Object.isUndefined(options) && !Object.isUndefined(options.theme)) {
             Object.extend(this.options.theme, options.theme || {});
