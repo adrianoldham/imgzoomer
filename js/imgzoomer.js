@@ -280,7 +280,8 @@ var ImgZoomer = Class.create();
 ImgZoomer.DefaultOptions = {
     theme: null,
     imgZoomerClass: 'imgZoomer',
-    zIndex: 10000
+    zIndex: 10000,
+    updatePosition: true
 };
 
 ImgZoomer.prototype = {
@@ -638,8 +639,10 @@ ImgZoomer.prototype = {
                 }
             );
         } else {     
-            if (this.repositioner != null) this.repositioner.stop();
-            this.repositioner = new PeriodicalExecuter(this.reposition.bind(this, zoomedImage), 0.1);
+            if (this.options.updatePosition) {
+                if (this.repositioner != null) this.repositioner.stop();
+                this.repositioner = new PeriodicalExecuter(this.reposition.bind(this, zoomedImage), 0.1);
+            }
                
             // always hide close box and shadows first
             new Effect.Parallel(effects, {
