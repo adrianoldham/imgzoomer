@@ -281,7 +281,8 @@ ImgZoomer.DefaultOptions = {
     theme: null,
     imgZoomerClass: 'imgZoomer',
     zIndex: 10000,
-    updatePosition: true
+    updatePosition: true,
+    closeOnBlur: true
 };
 
 ImgZoomer.prototype = {
@@ -423,7 +424,7 @@ ImgZoomer.prototype = {
         this.closeBox.style.top = (absolutePosition[1] - this.closeBox.height / 2) + "px";  
     },
 
-    openCloseBox: function(e, zoomedImage) {
+    openCloseBox: function(e, zoomedImage) {        
         // once zoomed make it clickable
         zoomedImage.onclick = this.toggleImage.bindAsEventListener(this, zoomedImage);
 
@@ -462,6 +463,9 @@ ImgZoomer.prototype = {
                 queue: { position: "end", scope: "imgzoomer" }
             }
         );
+        
+        this.closerFunction = this.toggleImage.bindAsEventListener(this, zoomedImage);
+        if (this.options.closeOnBlur) document.body.observe('click', this.closerFunction);
     },
 
     showSpinner: function(parentX, parentY, parentWidth, parentHeight) {
@@ -612,6 +616,9 @@ ImgZoomer.prototype = {
 
         // toggle zoom in or out
         if (zoomedImage.style.display != "none") {
+            if (this.closing == zoomedImage) return;
+            this.closing = zoomedImage;
+            
             if (this.repositioner != null) this.repositioner.stop();
             this.closeContent(zoomedImage);
                     
@@ -635,10 +642,18 @@ ImgZoomer.prototype = {
                     )
                 ], {
                     duration: duration,
-                    queue: { position: "end", scope: "imgzoomer" }
+                    queue: { position: "end", scope: "imgzoomer" }, 
+                    afterFinish: function(e) {
+                        this.closing = null;
+                    }.bind(this)
                 }
             );
-        } else {     
+            
+            if (this.options.closeOnBlur) {
+                document.body.stopObserving('click', this.closerFunction);            
+                this.closerFunction = null;
+            }
+        } else {
             if (this.options.updatePosition) {
                 if (this.repositioner != null) this.repositioner.stop();
                 this.repositioner = new PeriodicalExecuter(this.reposition.bind(this, zoomedImage), 0.1);
