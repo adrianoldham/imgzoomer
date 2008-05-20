@@ -465,7 +465,7 @@ ImgZoomer.prototype = {
         );
         
         this.closerFunction = this.toggleImage.bindAsEventListener(this, zoomedImage);
-        if (this.options.closeOnBlur) document.body.observe('click', this.closerFunction);
+        if (this.options.closeOnBlur) $(document.body).observe('click', this.closerFunction);
     },
 
     showSpinner: function(parentX, parentY, parentWidth, parentHeight) {
