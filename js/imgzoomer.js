@@ -124,7 +124,11 @@ ShadowMe.prototype = {
         }
         
         if (element.style.zIndex != "") {
-            this.shadowHolder.style.zIndex = element.getStyle("zIndex") - 1;
+            if (this.options.overlay == "top") 
+                this.shadowHolder.style.zIndex = element.getStyle("zIndex") + 1;
+            else
+                this.shadowHolder.style.zIndex = element.getStyle("zIndex") - 1;
+                
             shadows.each(function(s) {
                s.style.zIndex = this.shadowHolder.getStyle("zIndex");
             }.bind(this));
