@@ -66,7 +66,8 @@ var ShadowMe = Class.create();
 
 // Default ShadowMe options to use
 ShadowMe.DefaultOptions = {
-    zIndex: 100
+    zIndex: 100,
+    overlay: "bottom"
 };
 
 ShadowMe.totalShadows = 0;
@@ -128,7 +129,10 @@ ShadowMe.prototype = {
                s.style.zIndex = this.shadowHolder.getStyle("zIndex");
             }.bind(this));
         } else {
-            element.style.zIndex = this.options.zIndex + 1;
+            if (this.options.overlay == "top") 
+                element.style.zIndex = this.options.zIndex - 1;
+            else
+                element.style.zIndex = this.options.zIndex + 1;
         }
 
         var size = { width: element.getWidth(), height: element.getHeight() };
@@ -148,6 +152,8 @@ ShadowMe.prototype = {
 
         if (!isNaN(element.style.zIndex))
             this.shadowHolder.style.zIndex = element.style.zIndex - 3;
+            
+        if (this.timer == null) this.timer = new PeriodicalExecuter(this.applyTo.bind(this, element), 0.1);
 
         return this;
     },
