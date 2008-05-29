@@ -157,7 +157,12 @@ ShadowMe.prototype = {
         if (!isNaN(element.style.zIndex))
             this.shadowHolder.style.zIndex = element.style.zIndex - 3;
             
-        if (this.timer == null) this.timer = new PeriodicalExecuter(this.applyTo.bind(this, element), 0.1);
+        if (this.element != element) {
+            if (this.timer) this.timer.stop();
+            this.timer = new PeriodicalExecuter(this.applyTo.bind(this, element), 0.1);
+        }
+        
+        this.element = element;
 
         return this;
     },
@@ -550,7 +555,7 @@ ImgZoomer.prototype = {
             contentDiv.style.height = centerInformation.height + "px";
         }
         
-        this.shadowMe.applyTo(zoomedImage);
+//        // this.shadowMe.applyTo(zoomedImage);
         this.positionCloseBox(zoomedImage);
     },
 
