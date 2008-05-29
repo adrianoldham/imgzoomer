@@ -123,20 +123,20 @@ ShadowMe.prototype = {
             element.style.position = "relative";
         }
         
-        if (element.style.zIndex != "") {
+        if (element.getStyle("zIndex") != "") {
             if (this.options.overlay == "top") 
-                this.shadowHolder.style.zIndex = element.getStyle("zIndex") + 1;
+                this.shadowHolder.style.zIndex = parseInt(element.getStyle("zIndex")) + 1;
             else
-                this.shadowHolder.style.zIndex = element.getStyle("zIndex") - 1;
+                this.shadowHolder.style.zIndex = parseInt(element.getStyle("zIndex")) - 1;
                 
             shadows.each(function(s) {
                s.style.zIndex = this.shadowHolder.getStyle("zIndex");
             }.bind(this));
         } else {
             if (this.options.overlay == "top") 
-                element.style.zIndex = this.options.zIndex - 1;
+                element.style.zIndex = parseInt(this.options.zIndex) - 1;
             else
-                element.style.zIndex = this.options.zIndex + 1;
+                element.style.zIndex = parseInt(this.options.zIndex) + 1;
         }
 
         var size = { width: element.getWidth(), height: element.getHeight() };
@@ -154,8 +154,8 @@ ShadowMe.prototype = {
 
         this.canShow = true;
 
-        if (!isNaN(element.style.zIndex))
-            this.shadowHolder.style.zIndex = element.style.zIndex - 3;
+        //if (!isNaN(element.style.zIndex))
+        //    this.shadowHolder.style.zIndex = element.style.zIndex - 3;
             
         if (this.element != element) {
             if (this.timer) this.timer.stop();
