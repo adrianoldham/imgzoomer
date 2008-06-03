@@ -478,9 +478,11 @@ ImgZoomer.prototype = {
                 queue: { position: "end", scope: "imgzoomer" }
             }
         );
-        
-        this.closerFunction = this.toggleImage.bindAsEventListener(this, zoomedImage);
-        if (this.options.closeOnBlur) $(document.body).observe('click', this.closerFunction);
+
+        if (contentDiv == null) {
+            this.closerFunction = this.toggleImage.bindAsEventListener(this, zoomedImage);
+            if (this.options.closeOnBlur) $(document.body).observe('click', this.closerFunction);
+        }
     },
 
     showSpinner: function(parentX, parentY, parentWidth, parentHeight) {
