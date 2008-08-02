@@ -380,15 +380,37 @@ ImgZoomer.prototype = {
         
         if (e.onclick != null) return;
 
+        var isAnchor = (e.href.lastIndexOf("#") != -1);
+        
         // if link is linked to an image then...
-        if (IMAGE_FORMATS.include(e.href.split('.').last())) {
+        if (IMAGE_FORMATS.include(e.href.split('.').last()) || isAnchor) {
             // create the zoomed image element
-            var zoomedImage = new Image();
-            zoomedImage.src = e.href;
-            zoomedImage.alt = e.title;
-            zoomedImage.title = e.title;
+            var zoomedImage;
 
-            Element.extend(zoomedImage);
+            if (isAnchor) {
+                var element = $(e.href.substring(e.href.lastIndexOf("#") + 1));
+                
+                if (element.style.display != "none") return;
+                
+                zoomedImage = new Element("div");
+                
+                // use the elements background for the zoomer element
+                for (var p in zoomedImage.getStyles()) {
+                    if (p.indexOf("background") != -1) {
+                        zoomedImage.style[p] = element.style[p];
+                    }
+                }
+                
+                zoomedImage.width = element.getWidth();
+                zoomedImage.height = element.getHeight();
+            } else {
+                zoomedImage = new Image();
+                zoomedImage.src = e.href;
+                zoomedImage.alt = e.title;
+                zoomedImage.title = e.title;
+            }
+
+            Element.extend(zoomedImage); 
             
             // store them!
             this.linkElements.push(e);
@@ -557,7 +579,7 @@ ImgZoomer.prototype = {
             contentDiv.style.height = centerInformation.height + "px";
         }
         
-//        // this.shadowMe.applyTo(zoomedImage);
+        // this.shadowMe.applyTo(zoomedImage);
         this.positionCloseBox(zoomedImage);
     },
 
@@ -574,7 +596,7 @@ ImgZoomer.prototype = {
     },
 
     checkPreloader:function(e, zoomedImage) {
-        if (zoomedImage.complete) {
+        if (zoomedImage.complete || zoomedImage.complete == undefined) {
             this.loadingSpinner.hide();
             this.toggleImage(e, zoomedImage);
             if (this.preloader != null) this.preloader.stop();
