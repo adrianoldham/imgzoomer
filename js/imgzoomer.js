@@ -171,12 +171,12 @@ ShadowMe.prototype = {
         shadow.style.left = x + "px";
         shadow.style.top = y + "px";
 
-        if (width != null) shadow.style.width = width + "px";
-        if (height != null) shadow.style.height = height + "px";
+        if (width != null && width > 0) shadow.style.width = width + "px";
+        if (height != null && height > 0) shadow.style.height = height + "px";
     },
 
     appendToDom: function(appendTo) {
-        (appendTo || document.body).appendChild(this.shadowHolder);
+        (appendTo || $(document.body)).appendChild(this.shadowHolder);
         return this;
     },
 
@@ -361,7 +361,7 @@ ImgZoomer.prototype = {
         this.imgZoomer.appendChild(this.loadingSpinner);
         this.imgZoomer.appendChild(this.shadowHolder);
 
-        document.body.appendChild(this.imgZoomer);
+        $(document.body).appendChild(this.imgZoomer);
 
         // grab all links we are converting into a function to zoom its linked image
         $$(linkSelector || "a").each(this.setupPreload.bindAsEventListener(this));
@@ -395,9 +395,12 @@ ImgZoomer.prototype = {
                 zoomedImage = new Element("div");
                 
                 // use the elements background for the zoomer element
-                for (var p in zoomedImage.getStyles()) {
+                for (var p in element.getStyles()) {
                     if (p.indexOf("background") != -1) {
-                        zoomedImage.style[p] = element.getStyle(p);
+                        var styles = {};
+                        styles[p] = element.getStyle(p);
+                        
+                        if (p != "backgroundPosition") zoomedImage.setStyle(styles);
                     }
                 }
                 
@@ -473,7 +476,7 @@ ImgZoomer.prototype = {
             contentDiv.style.top = absolutePosition[1] + "px";
             contentDiv.show();
         }
-
+        
         // opera required hack so that we can grab the images width and height
         this.closeBox.setOpacity(0);
         this.closeBox.show();
@@ -632,7 +635,9 @@ ImgZoomer.prototype = {
         var contentDiv = this.contentDivs[this.zoomedImages.index(zoomedImage)];
         if (contentDiv != null) {
             contentDiv.hide();
-            contentDiv.innerHTML = "";
+            contentDiv.childElements().each(function(el) {
+               $(el.parentNode).removeChild(el); 
+            });
         }
     },
 
@@ -689,7 +694,7 @@ ImgZoomer.prototype = {
             );
             
             if (this.options.closeOnBlur) {
-                document.body.stopObserving('click', this.closerFunction);            
+                $(document.body).stopObserving('click', this.closerFunction);            
                 this.closerFunction = null;
             }
         } else {
