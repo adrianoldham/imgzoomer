@@ -397,7 +397,7 @@ ImgZoomer.prototype = {
                 // use the elements background for the zoomer element
                 for (var p in zoomedImage.getStyles()) {
                     if (p.indexOf("background") != -1) {
-                        zoomedImage.style[p] = element.style[p];
+                        zoomedImage.style[p] = element.getStyle(p);
                     }
                 }
                 
