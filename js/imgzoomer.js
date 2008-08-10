@@ -518,7 +518,22 @@ ImgZoomer.prototype = {
     },
     
     centerInfo: function(zoomedImage) {
-        var windowInformation = this.getWindowInformation();
+        var windowInformation;
+        
+        if (this.options.centerOf) {
+            this.options.centerOf = $(this.options.centerOf);
+            var position = this.options.centerOf.cumulativeOffset();
+            
+            windowInformation = {};
+            
+            windowInformation.scrollX = position[0];
+            windowInformation.scrollY = position[1];
+            
+            windowInformation.windowWidth = this.options.centerOf.getWidth();
+            windowInformation.windowHeight = this.options.centerOf.getHeight();    
+        } else {
+            windowInformation = this.getWindowInformation();
+        }
 
         // declare move to and zooming variables
         var moveToX, moveToY;
