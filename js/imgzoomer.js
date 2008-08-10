@@ -431,7 +431,7 @@ ImgZoomer.prototype = {
 
             var firstElement = this.findLink(zoomedImage).childElements().first();
             if (firstElement == null) firstElement = this.findLink(zoomedImage);
-            var absolutePosition = firstElement.cumulativeOffset();
+            var absolutePosition = this.screenPosition(firstElement);
 
             zoomedImage.style.position = "absolute";
             zoomedImage.style.left = absolutePosition[0] + "px";
@@ -640,6 +640,23 @@ ImgZoomer.prototype = {
             });
         }
     },
+    
+    screenPosition: function(element) {
+        var absolutePosition = element.cumulativeOffset();
+            
+        var element = element.parentNode;
+        
+        while (element) {
+            if (element == document.body) break;
+            
+            if (element.scrollTop) absolutePosition[1] -= element.scrollTop;
+            if (element.scrollLeft) absolutePosition[0] -= element.scrollLeft;
+            
+            element = element.parentNode;
+        }
+        
+        return absolutePosition;
+    },
 
     toggleImage: function(e, zoomedImage, duration) {
         var duration = duration == null ? this.options.theme.duration : duration;
@@ -668,7 +685,7 @@ ImgZoomer.prototype = {
                     
             var linkElement = this.findLink(zoomedImage).childElements().first();
             if (linkElement == null) linkElement = this.findLink(zoomedImage);
-            var absolutePosition = linkElement.cumulativeOffset();
+            var absolutePosition = this.screenPosition(linkElement);
 
             // hide shadows and close box first
             new Effect.Parallel(effects, {
