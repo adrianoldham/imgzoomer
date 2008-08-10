@@ -504,7 +504,7 @@ ImgZoomer.prototype = {
             }
         );
 
-        if (contentDiv == null) {
+        if (contentDiv == null || contentDiv.getElementsBySelector("object").length == 0) {
             this.closerFunction = this.toggleImage.bindAsEventListener(this, zoomedImage);
             if (this.options.closeOnBlur) $(document.body).observe('click', this.closerFunction);
         }
