@@ -297,7 +297,8 @@ ImgZoomer.DefaultOptions = {
     imgZoomerClass: 'imgZoomer',
     zIndex: 10000,
     updatePosition: true,
-    closeOnBlur: true
+    closeOnBlur: true,
+    ignoreBackground: false
 };
 
 ImgZoomer.prototype = {
@@ -396,9 +397,12 @@ ImgZoomer.prototype = {
                 
                 // use the elements background for the zoomer element
                 for (var p in element.getStyles()) {
-                    if (p.indexOf("background") != -1) {
+                    if ((p.indexOf("background") != -1 && !this.options.ignoreBackground) || p.indexOf("border") != -1) {
                         var styles = {};
                         styles[p] = element.getStyle(p);
+                        
+                        var removeStyles = {}
+                        removeStyles[p] = "0px";
                         
                         if (p != "backgroundPosition") zoomedImage.setStyle(styles);
                     }
@@ -475,6 +479,11 @@ ImgZoomer.prototype = {
             contentDiv.style.left = absolutePosition[0] + "px";
             contentDiv.style.top = absolutePosition[1] + "px";
             contentDiv.show();
+            
+            this.elements[this.zoomedImages.index(zoomedImage)].style.borderColor = "transparent";
+            
+            // hide zoomed image if there is a content div overlayed on top
+            //zoomedImage.setOpacity(0);
         }
         
         // opera required hack so that we can grab the images width and height
