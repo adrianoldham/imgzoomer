@@ -415,11 +415,9 @@ ImgZoomer.prototype = {
                     // use the elements background for the zoomer element
                     for (var p in element.getStyles()) {
                         if (p.indexOf("background") != -1 || p.indexOf("border") != -1) {
-                            var styles = {};
-                            styles[p] = element.getStyle(p);
+                            var styles = {}; styles[p] = element.getStyle(p);
                         
-                            var removeStyles = {}
-                            removeStyles[p] = "0px";
+                            var removeStyles = {}; removeStyles[p] = "0px";
                         
                             if (p != "backgroundPosition") zoomedImage.setStyle(styles);
                         }
@@ -556,7 +554,7 @@ ImgZoomer.prototype = {
 
         if (contentDiv == null || contentDiv.getElementsBySelector("object").length == 0) {
             this.closerFunction = this.toggleImage.bindAsEventListener(this, zoomedImage);
-            if (this.options.closeOnBlur) $(document.body).observe('click', this.closerFunction);
+            if (this.options.closeOnBlur) $(document).observe('click', this.closerFunction);
         }
     },
 
@@ -723,7 +721,7 @@ ImgZoomer.prototype = {
         return absolutePosition;
     },
 
-    toggleImage: function(e, zoomedImage, duration) {
+    toggleImage: function(e, zoomedImage, duration) {        
         var duration = duration == null ? this.options.theme.duration : duration;
 
         // create effects for fading close box and shadow
@@ -779,7 +777,7 @@ ImgZoomer.prototype = {
             );
             
             if (this.options.closeOnBlur) {
-                $(document.body).stopObserving('click', this.closerFunction);            
+                $(document).stopObserving('click', this.closerFunction);            
                 this.closerFunction = null;
             }
         } else {
