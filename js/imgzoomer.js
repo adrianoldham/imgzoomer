@@ -44,6 +44,7 @@ Themes.Default = {
     shadowClass: "shadowMe",
     shadows: true,
     closeBox: "closebox.png",
+    closeBoxClass: null,
     spinner: "spinner.gif",
     blankPixel: "blank.gif",
     duration: 0.5,
@@ -337,6 +338,8 @@ ImgZoomer.prototype = {
         this.closeBox.style.position = "absolute";
         this.closeBox.style.cursor = "pointer";
         this.closeBox.style.zIndex = this.options.zIndex;
+        
+        if (this.options.theme.closeBoxClass != null) this.closeBox.classNames().add(this.options.theme.closeBoxClass);
 
         // create loading spinner
         this.loadingSpinner = new Image();
@@ -437,16 +440,28 @@ ImgZoomer.prototype = {
             // store them!
             this.linkElements.push(e);
             this.zoomedImages.push(zoomedImage);
+
+            var contentDiv;
             
             // intialise and setup all plugins
             for (pluginName in ImgZoomer.plugins) {
                 var contentDiv = ImgZoomer.plugins[pluginName].setup(this, e, zoomedImage);
-                if (contentDiv != null) {
-                    var zoomIndex = this.zoomedImages.index(zoomedImage);
-                    this.contentDivs[zoomIndex] = contentDiv;
-                    this.imgZoomer.appendChild(contentDiv);
-                }
+                if (contentDiv != null) break;
             }
+            
+            // if no content div then create a blank one
+            if (contentDiv == null) {
+                contentDiv = new Element("div");
+                contentDiv.style.position = "absolute";
+                contentDiv.style.cursor = "pointer";
+                contentDiv.style.zIndex = this.options.zIndex - 1;
+                contentDiv.hide();
+            }
+            
+            // add the content div to the img zoomer
+            var zoomIndex = this.zoomedImages.index(zoomedImage);
+            this.contentDivs[zoomIndex] = contentDiv;
+            this.imgZoomer.appendChild(contentDiv);
 
             var firstElement = this.findLink(zoomedImage).childElements().first();
             if (firstElement == null) firstElement = this.findLink(zoomedImage);
@@ -478,12 +493,15 @@ ImgZoomer.prototype = {
     positionCloseBox: function(zoomedImage) {
         var absolutePosition = zoomedImage.cumulativeOffset();
 
-        // position the close box (top left of zoomed image)
-        this.closeBox.style.left = (absolutePosition[0] - this.closeBox.width / 2) + "px";
-        this.closeBox.style.top = (absolutePosition[1] - this.closeBox.height / 2) + "px";  
+        // If no class specified for close box, then point it at the top left
+        if (this.options.theme.closeBoxClass == null) {
+            // position the close box (top left of zoomed image)
+            this.closeBox.style.left = -this.closeBox.getWidth() / 2 + "px";
+            this.closeBox.style.top = -this.closeBox.getHeight() / 2 + "px";
+        }
     },
 
-    openCloseBox: function(e, zoomedImage) {        
+    openCloseBox: function(e, zoomedImage) {                
         // once zoomed make it clickable
         zoomedImage.onclick = this.toggleImage.bindAsEventListener(this, zoomedImage);
 
@@ -491,6 +509,13 @@ ImgZoomer.prototype = {
         
         var contentDiv = this.contentDivs[this.zoomedImages.index(zoomedImage)];
         if (contentDiv != null) {
+            // If content div is blank, then make it clickable to close (ie. make it invisible)
+            if (contentDiv.innerHTML == "") {
+                contentDiv.onclick = this.toggleImage.bindAsEventListener(this, zoomedImage);
+            }
+            
+            contentDiv.appendChild(this.closeBox);
+        
             contentDiv.style.left = absolutePosition[0] + "px";
             contentDiv.style.top = absolutePosition[1] + "px";
             contentDiv.show();
