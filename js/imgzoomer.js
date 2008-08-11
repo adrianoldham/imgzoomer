@@ -494,9 +494,6 @@ ImgZoomer.prototype = {
             contentDiv.style.left = absolutePosition[0] + "px";
             contentDiv.style.top = absolutePosition[1] + "px";
             contentDiv.show();
-
-            if (this.options.zoomRects)
-                this.elements[this.zoomedImages.index(zoomedImage)].style.borderColor = "transparent";
             
             // hide zoomed image if there is a content div overlayed on top
             //zoomedImage.setOpacity(0);
