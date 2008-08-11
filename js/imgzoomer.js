@@ -707,6 +707,8 @@ ImgZoomer.prototype = {
                 duration: this.options.theme.fadeDuration,
                 queue: { position: "end", scope: "imgzoomer" }
             });
+            
+            $(document.body).style.overflowX = "hidden";
 
             // then scale image and fade out to normal
             new Effect.Parallel([
@@ -721,6 +723,7 @@ ImgZoomer.prototype = {
                     queue: { position: "end", scope: "imgzoomer" }, 
                     afterFinish: function(e) {
                         this.closing = null;
+                        $(document.body).style.overflowX = "auto";
                     }.bind(this)
                 }
             );
