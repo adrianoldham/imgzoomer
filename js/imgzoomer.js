@@ -750,6 +750,13 @@ ImgZoomer.prototype = {
             zoomedImage.show();
 
             var center = this.centerInfo(zoomedImage);
+            
+            var linkElement = this.findLink(zoomedImage).childElements().first();
+            if (linkElement == null) linkElement = this.findLink(zoomedImage);
+            var absolutePosition = this.screenPosition(linkElement);
+            
+            zoomedImage.style.left = absolutePosition[0] + "px";
+            zoomedImage.style.top = absolutePosition[1] + "px";
 
             new Effect.Parallel([
                     new Effect.Appear(zoomedImage, { sync: true }),
