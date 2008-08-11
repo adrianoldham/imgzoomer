@@ -298,7 +298,8 @@ ImgZoomer.DefaultOptions = {
     zIndex: 10000,
     updatePosition: true,
     closeOnBlur: true,
-    zoomRects: true
+    zoomRects: true,
+    zoomRectsClass: null
 };
 
 ImgZoomer.prototype = {
@@ -306,7 +307,7 @@ ImgZoomer.prototype = {
         this.linkElements = new Array();
         this.zoomedImages = new Array();
         this.imageSizes   = new Array();
-        this.contentDivs    = new Array();
+        this.contentDivs  = new Array();
         
         this.options = Object.extend(Object.extend({ }, ImgZoomer.DefaultOptions), options || { });        
         this.options.theme = Object.extend({ }, Themes.Default);
@@ -395,16 +396,30 @@ ImgZoomer.prototype = {
                 
                 zoomedImage = new Element("div");
                 
-                // use the elements background for the zoomer element
-                for (var p in element.getStyles()) {
-                    if ((p.indexOf("background") != -1 && !this.options.zoomRects) || p.indexOf("border") != -1) {
-                        var styles = {};
-                        styles[p] = element.getStyle(p);
+                if (this.options.zoomRects) {
+                    if (this.options.zoomRectsClass) {
+                        zoomedImage.classNames().add(this.options.zoomRectsClass);
+                    } else {
+                        zoomedImage.style.borderColor = "#333333";
+                        zoomedImage.style.borderStyle = "dotted";
+                        zoomedImage.style.borderTopWidth = "1px";
+                        zoomedImage.style.borderLeftWidth = "1px";
+                        zoomedImage.style.borderRightWidth = "1px";
+                        zoomedImage.style.borderBottomWidth = "1px";
+                    }
+                }
+                else {
+                    // use the elements background for the zoomer element
+                    for (var p in element.getStyles()) {
+                        if (p.indexOf("background") != -1 || p.indexOf("border") != -1) {
+                            var styles = {};
+                            styles[p] = element.getStyle(p);
                         
-                        var removeStyles = {}
-                        removeStyles[p] = "0px";
+                            var removeStyles = {}
+                            removeStyles[p] = "0px";
                         
-                        if (p != "backgroundPosition") zoomedImage.setStyle(styles);
+                            if (p != "backgroundPosition") zoomedImage.setStyle(styles);
+                        }
                     }
                 }
                 

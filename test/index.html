@@ -31,6 +31,10 @@
 			height: 200px;
 			border: 1px dotted #333;
 		}
+		
+		.zoomRect {
+			border: 1px dotted #f00;
+		}
     </style>
 
 </head>
@@ -74,7 +78,8 @@
             var ImgZoomer2 = new ImgZoomer("a.zoomer2", {
                 imagePath: "../images/imgzoomer/",
 				centerOf: "blackContainer",
-				zoomRects: false
+				zoomRects: true,
+				zoomRectsClass: "zoomRect"
             });
         }  
         Event.observe(window, "load", runTest);
