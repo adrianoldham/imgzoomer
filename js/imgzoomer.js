@@ -298,7 +298,7 @@ ImgZoomer.DefaultOptions = {
     zIndex: 10000,
     updatePosition: true,
     closeOnBlur: true,
-    ignoreBackground: false
+    zoomRects: true
 };
 
 ImgZoomer.prototype = {
@@ -397,7 +397,7 @@ ImgZoomer.prototype = {
                 
                 // use the elements background for the zoomer element
                 for (var p in element.getStyles()) {
-                    if ((p.indexOf("background") != -1 && !this.options.ignoreBackground) || p.indexOf("border") != -1) {
+                    if ((p.indexOf("background") != -1 && !this.options.zoomRects) || p.indexOf("border") != -1) {
                         var styles = {};
                         styles[p] = element.getStyle(p);
                         
@@ -479,8 +479,9 @@ ImgZoomer.prototype = {
             contentDiv.style.left = absolutePosition[0] + "px";
             contentDiv.style.top = absolutePosition[1] + "px";
             contentDiv.show();
-            
-            this.elements[this.zoomedImages.index(zoomedImage)].style.borderColor = "transparent";
+
+            if (this.options.zoomRects)
+                this.elements[this.zoomedImages.index(zoomedImage)].style.borderColor = "transparent";
             
             // hide zoomed image if there is a content div overlayed on top
             //zoomedImage.setOpacity(0);
