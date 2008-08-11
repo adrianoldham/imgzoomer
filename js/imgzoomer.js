@@ -298,7 +298,7 @@ ImgZoomer.DefaultOptions = {
     zIndex: 10000,
     updatePosition: true,
     closeOnBlur: true,
-    zoomRects: true,
+    zoomRects: false,
     zoomRectsClass: null
 };
 
