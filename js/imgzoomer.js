@@ -335,11 +335,6 @@ ImgZoomer.prototype = {
         // create close box
         this.closeBox = new Image();
         this.closeBox.src = this.options.theme.imagePath + "window/" + this.options.theme.windowTheme + "/" + this.options.theme.closeBox;
-        this.closeBox.style.position = "absolute";
-        this.closeBox.style.cursor = "pointer";
-        this.closeBox.style.zIndex = this.options.zIndex;
-        
-        if (this.options.theme.closeBoxClass != null) this.closeBox.classNames().add(this.options.theme.closeBoxClass);
 
         // create loading spinner
         this.loadingSpinner = new Image();
@@ -353,6 +348,16 @@ ImgZoomer.prototype = {
         Element.extend(this.imgZoomer);
         
         this.closeBox.iePNGFix(this.options.theme.imagePath + "extras/" + this.options.theme.blankPixel);
+        
+        var tempCloseBoxDiv = new Element("div");
+        tempCloseBoxDiv.appendChild(this.closeBox);
+        this.closeBox = tempCloseBoxDiv;
+        
+        this.closeBox.style.position = "absolute";
+        this.closeBox.style.cursor = "pointer";
+        this.closeBox.style.zIndex = this.options.zIndex;
+        
+        if (this.options.theme.closeBoxClass != null) this.closeBox.className = this.options.theme.closeBoxClass;
 
         this.closeBox.hide();
         this.loadingSpinner.hide();
@@ -678,9 +683,11 @@ ImgZoomer.prototype = {
                 contentDiv.style.width = contentSize.width + "px";
                 contentDiv.style.height = contentSize.height + "px";
                 
-                // run the plugins
-                for (pluginName in ImgZoomer.plugins) {
-                    ImgZoomer.plugins[pluginName].setContent(this, contentDiv, zoomedImage);
+                // run the plugins only if there is no content in the content divs
+                if (contentDiv.innerHTML == "") {
+                   for (pluginName in ImgZoomer.plugins) {
+                       ImgZoomer.plugins[pluginName].setContent(this, contentDiv, zoomedImage);
+                   }
                 }
             }
         } else {
@@ -694,13 +701,10 @@ ImgZoomer.prototype = {
         }
     },
     
-    closeContent: function(zoomedImage) {
+    closeContent: function(zoomedImage, effects) {
         var contentDiv = this.contentDivs[this.zoomedImages.index(zoomedImage)];
         if (contentDiv != null) {
-            contentDiv.hide();
-            contentDiv.childElements().each(function(el) {
-               $(el.parentNode).removeChild(el); 
-            });
+            effects.push(new Effect.Fade(contentDiv, { sync: true }));
         }
     },
     
@@ -744,7 +748,7 @@ ImgZoomer.prototype = {
             this.closing = zoomedImage;
             
             if (this.repositioner != null) this.repositioner.stop();
-            this.closeContent(zoomedImage);
+            this.closeContent(zoomedImage, effects);
                     
             var linkElement = this.findLink(zoomedImage).childElements().first();
             if (linkElement == null) linkElement = this.findLink(zoomedImage);
@@ -756,7 +760,7 @@ ImgZoomer.prototype = {
                 queue: { position: "end", scope: "imgzoomer" }
             });
             
-            $(document.body).style.overflowX = "hidden";
+            $(document.body).setStyle({ overflowX: "hidden" });
 
             // then scale image and fade out to normal
             new Effect.Parallel([
@@ -769,10 +773,15 @@ ImgZoomer.prototype = {
                 ], {
                     duration: duration,
                     queue: { position: "end", scope: "imgzoomer" }, 
-                    afterFinish: function(e) {
+                    afterFinish: function(e, zoomedImage) {
                         this.closing = null;
                         $(document.body).style.overflowX = "auto";
-                    }.bind(this)
+                        
+                        // Run remove content for each plugin (some plugins may not want to remove)
+                        for (pluginName in ImgZoomer.plugins) {
+                           ImgZoomer.plugins[pluginName].removeContent(this, zoomedImage);
+                        }
+                    }.bindAsEventListener(this, zoomedImage)
                 }
             );
             

@@ -26,6 +26,20 @@ Object.extend(ImgZoomer.plugins, {
             }
         },
         
+        removeContent: function(zoomer, zoomedImage) {
+            var index = zoomer.zoomedImages.index(zoomedImage);
+            var contentDiv = zoomer.contentDivs[index];
+            var src = zoomer.srcs[index];
+            
+            if (src) {
+                contentDiv.childElements().each(function(el) {
+                    if (el.parentNode != null) $(el.parentNode).removeChild(el); 
+                });
+                
+                contentDiv.innerHTML = "";
+            }
+        },
+        
         setContent: function(zoomer, element, zoomedImage) {
             var zoomIndex = zoomer.zoomedImages.index(zoomedImage);
             var videoStreamName = zoomer.srcs[zoomIndex];

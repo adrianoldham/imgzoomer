@@ -19,6 +19,9 @@ Object.extend(ImgZoomer.plugins, {
             }
         },
         
+        removeContent: function(zoomer, zoomedImage) {
+        },
+        
         setContent: function(zoomer, element, zoomedImage) {
             var zoomIndex = zoomer.zoomedImages.index(zoomedImage);
             var htmlElement = zoomer.elements[zoomIndex];
@@ -27,7 +30,7 @@ Object.extend(ImgZoomer.plugins, {
                 element.appendChild(htmlElement);
                 
                 htmlElement.style.overflow = "auto";
-                htmlElement.style.display = "block";            
+                htmlElement.style.display = "block";
             }
         }
     }
