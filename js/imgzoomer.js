@@ -421,9 +421,6 @@ ImgZoomer.prototype = {
                     for (var p in element.getStyles()) {
                         if (p.indexOf("background") != -1 || p.indexOf("border") != -1) {
                             var styles = {}; styles[p] = element.getStyle(p);
-                        
-                            var removeStyles = {}; removeStyles[p] = "0px";
-                        
                             if (p != "backgroundPosition") zoomedImage.setStyle(styles);
                         }
                     }
