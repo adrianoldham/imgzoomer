@@ -400,7 +400,7 @@ ImgZoomer.prototype = {
             if (isAnchor) {
                 var element = $(e.href.substring(e.href.lastIndexOf("#") + 1));
                 
-                if (element.style.display != "none") return;
+                element.hide();
                 
                 zoomedImage = new Element("div");
                 
