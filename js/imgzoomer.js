@@ -382,6 +382,14 @@ ImgZoomer.prototype = {
     },
 
     setupPreload: function(e) {
+        var isAnchor = (e.href.lastIndexOf("#") != -1);
+        if (IMAGE_FORMATS.include(e.href.split('.').last()) || isAnchor) {
+            if (isAnchor) {
+                var element = $(e.href.substring(e.href.lastIndexOf("#") + 1));
+                element.hide();
+            }
+        }
+        
         e.onmouseover = this.setupImage.bindAsEventListener(this, e);
     },
 
@@ -399,8 +407,6 @@ ImgZoomer.prototype = {
 
             if (isAnchor) {
                 var element = $(e.href.substring(e.href.lastIndexOf("#") + 1));
-                
-                element.hide();
                 
                 zoomedImage = new Element("div");
                 
