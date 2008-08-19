@@ -400,14 +400,17 @@ ImgZoomer.prototype = {
 
         var isAnchor = (e.href.lastIndexOf("#") != -1);
         
-        // if link is linked to an image then...
-        if (IMAGE_FORMATS.include(e.href.split('.').last()) || isAnchor) {
+        if (true) {
             // create the zoomed image element
             var zoomedImage;
-
-            if (isAnchor) {
-                var element = $(e.href.substring(e.href.lastIndexOf("#") + 1));
-                
+            var useImage = IMAGE_FORMATS.include(e.href.split('.').last());
+            
+            if (useImage) {
+                zoomedImage = new Image();
+                zoomedImage.src = e.href;
+                zoomedImage.alt = e.title;
+                zoomedImage.title = e.title;  
+            } else {
                 zoomedImage = new Element("div");
                 
                 if (this.options.zoomRects) {
@@ -422,7 +425,12 @@ ImgZoomer.prototype = {
                         zoomedImage.style.borderBottomWidth = "1px";
                     }
                 }
-                else {
+            }
+
+            if (isAnchor) {
+                var element = $(e.href.substring(e.href.lastIndexOf("#") + 1));
+                
+                if (!this.options.zoomRects) {
                     // use the elements background for the zoomer element
                     for (var p in element.getStyles()) {
                         if (p.indexOf("background") != -1 || p.indexOf("border") != -1) {
@@ -432,14 +440,23 @@ ImgZoomer.prototype = {
                     }
                 }
                 
-                zoomedImage.width = element.getWidth();
-                zoomedImage.height = element.getHeight();
-            } else {
-                zoomedImage = new Image();
-                zoomedImage.src = e.href;
-                zoomedImage.alt = e.title;
-                zoomedImage.title = e.title;
+                var borderLeft = parseInt(zoomedImage.getStyle('borderLeftWidth'));
+                borderLeft = isNaN(borderLeft) ? 0 : borderLeft;
+                
+                var borderRight = parseInt(zoomedImage.getStyle('borderRightWidth'));
+                borderRight = isNaN(borderRight) ? 0 : borderRight;
+                
+                var borderTop = parseInt(zoomedImage.getStyle('borderTopWidth'));
+                borderTop = isNaN(borderTop) ? 0 : borderTop;
+                
+                var borderBottom = parseInt(zoomedImage.getStyle('borderBottomWidth'));
+                borderBottom = isNaN(borderBottom) ? 0 : borderBottom;
+                
+                zoomedImage.width = element.getWidth() - borderLeft - borderRight;
+                zoomedImage.height = element.getHeight() - borderBottom - borderTop;
             }
+            
+            if (zoomedImage == null) return;
 
             Element.extend(zoomedImage); 
             
@@ -448,11 +465,17 @@ ImgZoomer.prototype = {
             this.zoomedImages.push(zoomedImage);
 
             var contentDiv;
-            
+
             // intialise and setup all plugins
             for (pluginName in ImgZoomer.plugins) {
                 var contentDiv = ImgZoomer.plugins[pluginName].setup(this, e, zoomedImage);
                 if (contentDiv != null) break;
+            }
+            
+            if (contentDiv == null && !useImage) {
+                this.linkElements.pop();
+                this.zoomedImages.pop();
+                return;
             }
             
             // if no content div then create a blank one
