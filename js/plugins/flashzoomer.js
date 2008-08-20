@@ -27,6 +27,8 @@ Object.extend(ImgZoomer.plugins, {
         },
         
         removeContent: function(zoomer, zoomedImage) {
+            zoomer.srcs = zoomer.srcs || [];
+            
             var index = zoomer.zoomedImages.index(zoomedImage);
             var contentDiv = zoomer.contentDivs[index];
             var src = zoomer.srcs[index];

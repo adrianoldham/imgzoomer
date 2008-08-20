@@ -44,6 +44,19 @@ Object.extend(ImgZoomer.plugins, {
         },
         
         removeContent: function(zoomer, zoomedImage) {
+            zoomer.iframeSrcs = zoomer.iframeSrcs || [];
+            
+            var index = zoomer.zoomedImages.index(zoomedImage);
+            var contentDiv = zoomer.contentDivs[index];
+            var src = zoomer.iframeSrcs[index];
+            
+            if (src) {
+                contentDiv.childElements().each(function(el) {
+                    if (el.parentNode != null) $(el.parentNode).removeChild(el); 
+                });
+                
+                contentDiv.innerHTML = "";
+            }
         },
         
         setContent: function(zoomer, element, zoomedImage) {
