@@ -108,7 +108,7 @@ ShadowMe.prototype = {
         return this;
     },
 
-    applyTo: function(element) {
+    applyTo: function(element, doNotReapply) {
         if (element.complete != null) {
             if (!element.complete) {
                 // if applying image to shadow and image width not know yet then wait until it is
@@ -158,11 +158,18 @@ ShadowMe.prototype = {
         //if (!isNaN(element.style.zIndex))
         //    this.shadowHolder.style.zIndex = element.style.zIndex - 3;
             
-        if (this.element != element) {
+        if (this.element != element && !doNotReapply) {
 //          if (this.timer) this.timer.stop();
 //          this.timer = new PeriodicalExecuter(this.applyTo.bind(this, element), 0.1);
-            Event.observe(window, "scroll", this.applyTo.bind(this, element));
-            Event.observe(window, "resize", this.applyTo.bind(this, element));
+            if (this.applier) {
+                Event.stopObserving(window, "scroll", this.applier);
+                Event.stopObserving(window, "resize", this.applier);   
+            }
+            
+            this.applier = this.applyTo.bind(this, element, true);
+            
+            Event.observe(window, "scroll", this.applier);
+            Event.observe(window, "resize", this.applier);
         }
         
         this.element = element;
