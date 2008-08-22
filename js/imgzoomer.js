@@ -161,6 +161,7 @@ ShadowMe.prototype = {
         if (this.element != element) {
 //          if (this.timer) this.timer.stop();
 //          this.timer = new PeriodicalExecuter(this.applyTo.bind(this, element), 0.1);
+            Event.observe(window, "scroll", this.applyTo.bind(this, element));
             Event.observe(window, "resize", this.applyTo.bind(this, element));
         }
         
@@ -679,6 +680,7 @@ ImgZoomer.prototype = {
         
         // this.shadowMe.applyTo(zoomedImage);
         this.positionCloseBox(zoomedImage);
+        this.shadowMe.applyTo(zoomedImage);
     },
 
     preload: function(e, zoomedImage) {
@@ -774,7 +776,11 @@ ImgZoomer.prototype = {
             if (this.closing == zoomedImage) return;
             this.closing = zoomedImage;
             
-            if (this.repositioner != null) this.repositioner.stop();
+            if (this.repositionEvent) {
+                Event.stopObserving(window, "scroll", this.repositionEvent);
+                Event.stopObserving(window, "resize", this.repositionEvent);                    
+            }
+            
             this.closeContent(zoomedImage, effects);
                     
             var linkElement = this.findLink(zoomedImage).childElements().first();
@@ -818,8 +824,18 @@ ImgZoomer.prototype = {
             }
         } else {
             if (this.options.updatePosition) {
-                if (this.repositioner != null) this.repositioner.stop();
-                this.repositioner = new PeriodicalExecuter(this.reposition.bind(this, zoomedImage), 0.1);
+//                if (this.repositioner != null) this.repositioner.stop();
+//                this.repositioner = new PeriodicalExecuter(this.reposition.bind(this, zoomedImage), 0.1);
+
+                if (this.repositionEvent) {
+                    Event.stopObserving(window, "scroll", this.repositionEvent);
+                    Event.stopObserving(window, "resize", this.repositionEvent);                    
+                }
+                
+                this.repositionEvent = this.reposition.bind(this, zoomedImage);
+                
+                Event.observe(window, "scroll", this.repositionEvent);
+                Event.observe(window, "resize", this.repositionEvent);
             }
                
             // always hide close box and shadows first
