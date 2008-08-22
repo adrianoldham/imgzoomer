@@ -159,8 +159,9 @@ ShadowMe.prototype = {
         //    this.shadowHolder.style.zIndex = element.style.zIndex - 3;
             
         if (this.element != element) {
-            if (this.timer) this.timer.stop();
-            this.timer = new PeriodicalExecuter(this.applyTo.bind(this, element), 0.1);
+//          if (this.timer) this.timer.stop();
+//          this.timer = new PeriodicalExecuter(this.applyTo.bind(this, element), 0.1);
+            Event.observe(window, "resize", this.applyTo.bind(this, element));
         }
         
         this.element = element;
