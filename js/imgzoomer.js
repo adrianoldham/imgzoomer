@@ -438,7 +438,19 @@ ImgZoomer.prototype = {
 
             if (isAnchor) {
                 var element = $(e.href.substring(e.href.lastIndexOf("#") + 1));
-                
+
+                var hidden = [];
+                var el = element;
+                while (true) {
+                    if (el == null) break;
+
+                    if (el.style && el.style.display == "none") {
+                        hidden.push(el);
+                        el.show();
+                    }
+                    el = $(el.parentNode);
+                }
+
                 if (!this.options.zoomRects) {
                     // use the elements background for the zoomer element
                     for (var p in element.getStyles()) {
@@ -463,6 +475,10 @@ ImgZoomer.prototype = {
                 
                 zoomedImage.width = element.getWidth() - borderLeft - borderRight;
                 zoomedImage.height = element.getHeight() - borderBottom - borderTop;
+                
+                hidden.each(function (el) {
+                    el.hide();
+                });
             }
             
             if (zoomedImage == null) return;
