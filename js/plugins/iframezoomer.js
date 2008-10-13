@@ -65,6 +65,8 @@ Object.extend(ImgZoomer.plugins, {
             var zoomIndex = zoomer.zoomedImages.index(zoomedImage);
             var iframeSrc = zoomer.iframeSrcs[zoomIndex];
             
+            element.show();
+
             if (iframeSrc) {
                 var size = { width: zoomer.options.width, height: zoomer.options.height };
                 var iframeObject =
