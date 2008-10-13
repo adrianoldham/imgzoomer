@@ -64,10 +64,10 @@ Object.extend(ImgZoomer.plugins, {
             
             var zoomIndex = zoomer.zoomedImages.index(zoomedImage);
             var iframeSrc = zoomer.iframeSrcs[zoomIndex];
-            
-            element.show();
 
             if (iframeSrc) {
+                element.show();
+            
                 var size = { width: zoomer.options.width, height: zoomer.options.height };
                 var iframeObject =
                 '<iframe width="' + size.width + '" height="' + size.height + '" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="' + iframeSrc + '"></iframe>';
