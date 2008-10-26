@@ -275,8 +275,8 @@ Array.prototype.include = function(val) {
 
 String.prototype.trim = function() { return this.replace(/^\s+|\s+$/, ''); };
 
-var IMAGE_FORMATS = ["png", "jpg", "jpeg", "gif", "tif", "tiff", "bmp"];
-var FLASH_FORMATS = ["flv", "swf"];
+var IMAGE_FORMATS = /^.+\.((jpg)|(gif)|(jpeg)|(png)|(tif)|(tiff)|(bmp))$/;
+var FLASH_FORMATS = /^.+\.((flv)|(swf))$/;
 
 /*
 Image Zoomer Class
@@ -392,7 +392,7 @@ ImgZoomer.prototype = {
 
     setupPreload: function(e) {
         var isAnchor = (e.href.lastIndexOf("#") != -1);
-        if (IMAGE_FORMATS.include(e.href.split('.').last()) || isAnchor) {
+        if (IMAGE_FORMATS.test(e.href.toLowerCase()) || isAnchor) {
             if (isAnchor) {
                 var element = $(e.href.substring(e.href.lastIndexOf("#") + 1));
                 element.hide();
@@ -412,7 +412,7 @@ ImgZoomer.prototype = {
         if (true) {
             // create the zoomed image element
             var zoomedImage;
-            var useImage = IMAGE_FORMATS.include(e.href.split('.').last());
+            var useImage = IMAGE_FORMATS.test(e.href.toLowerCase());
             
             if (useImage) {
                 zoomedImage = new Image();
