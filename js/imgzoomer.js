@@ -43,6 +43,7 @@ Themes.Default = {
     shadowDepth: 15,
     shadowClass: "shadowMe",
     shadows: true,
+    activeClass: "active",
     closeBox: "closebox.png",
     closeBoxClass: null,
     spinner: "spinner.gif",
@@ -776,8 +777,17 @@ ImgZoomer.prototype = {
         
         return absolutePosition;
     },
+    
+    removeActives: function() {
+        // make all images not active
+        this.linkElements.each(function(l) {
+            l.classNames().remove(this.options.theme.activeClass);
+        }.bind(this));
+    },
 
     toggleImage: function(e, zoomedImage, duration) {        
+        this.removeActives();        
+        
         var duration = duration == null ? this.options.theme.duration : duration;
 
         // create effects for fading close box and shadow
@@ -889,6 +899,8 @@ ImgZoomer.prototype = {
                     duration: duration,
                     afterFinish: this.openCloseBox.bindAsEventListener(this, zoomedImage)
             });
+            
+            this.findLink(zoomedImage).classNames().add(this.options.theme.activeClass);
         }
 
         return false;
