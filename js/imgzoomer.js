@@ -627,7 +627,13 @@ ImgZoomer.prototype = {
         
         if (this.options.centerOf) {
             this.options.centerOf = $(this.options.centerOf);
+            
+            var overflowY = $(document.body).getStyle('overflowY');
+            $(document.body).setStyle({ overflowY: "hidden" });
+            
             var position = this.options.centerOf.cumulativeOffset();
+            
+            $(document.body).setStyle({ overflowY: overflowY });
             
             windowInformation = {};
             
