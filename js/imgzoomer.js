@@ -714,6 +714,9 @@ ImgZoomer.prototype = {
     },
 
     preload: function(e, zoomedImage) {
+        // if img zoomer has been disabled then don't zoom anything
+        if (this.disabled) return;
+
         // only zoom image if none other is currently zooming
         if (Effect.Queues.get('imgzoomer').size() != 0) return false;
 
