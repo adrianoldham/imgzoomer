@@ -310,7 +310,9 @@ ImgZoomer.DefaultOptions = {
     updatePosition: true,
     closeOnBlur: true,
     zoomRects: false,
-    zoomRectsClass: null
+    zoomRectsClass: null,
+    onOpen: function () {},
+    onClose: function () {}
 };
 
 ImgZoomer.prototype = {
@@ -815,6 +817,8 @@ ImgZoomer.prototype = {
 
         // toggle zoom in or out
         if (zoomedImage.style.display != "none") {
+            this.options.onClose();
+            
             if (this.closing == zoomedImage) return;
             this.closing = zoomedImage;
             
@@ -865,6 +869,8 @@ ImgZoomer.prototype = {
                 this.closerFunction = null;
             }
         } else {
+            this.options.onOpen();
+            
             if (this.options.updatePosition) {
 //                if (this.repositioner != null) this.repositioner.stop();
 //                this.repositioner = new PeriodicalExecuter(this.reposition.bind(this, zoomedImage), 0.1);
