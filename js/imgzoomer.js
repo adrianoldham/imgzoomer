@@ -309,6 +309,7 @@ ImgZoomer.DefaultOptions = {
     zIndex: 10000,
     updatePosition: true,
     closeOnBlur: true,
+    closeOnEscape: true,
     zoomRects: false,
     zoomRectsClass: null,
     onOpen: function () {},
@@ -612,8 +613,19 @@ ImgZoomer.prototype = {
         );
 
         if (contentDiv == null || contentDiv.getElementsBySelector("object").length == 0) {
+            // do blur close
             this.closerFunction = this.toggleImage.bindAsEventListener(this, zoomedImage);
             if (this.options.closeOnBlur) $(document).observe('click', this.closerFunction);
+            
+            // do escape close
+            this.escapeFunction = function(event, zoomedImage) {
+                // ESC key
+                if (event.keyCode == 27) this.toggleImage(this, zoomedImage);
+            }.bindAsEventListener(this, zoomedImage);
+            
+            if (this.options.closeOnEscape) {
+                $(document).observe('keypress', this.escapeFunction);
+            }
         }
     },
 
@@ -867,6 +879,11 @@ ImgZoomer.prototype = {
             if (this.options.closeOnBlur) {
                 $(document).stopObserving('click', this.closerFunction);            
                 this.closerFunction = null;
+            }
+            
+            if (this.options.closeOnEscape) {
+                $(document).stopObserving('keypress', this.escapeFunction);            
+                this.escapeFunction = null;
             }
         } else {
             this.options.onOpen();
