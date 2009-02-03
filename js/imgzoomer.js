@@ -456,13 +456,15 @@ ImgZoomer.prototype = {
                 }
 
                 if (!this.options.zoomRects) {
-                    // use the elements background for the zoomer element
-                    for (var p in element.getStyles()) {
-                        if (p.indexOf("background") != -1 || p.indexOf("border") != -1) {
-                            var styles = {}; styles[p] = element.getStyle(p);
-                            if (p != "backgroundPosition") zoomedImage.setStyle(styles);
-                        }
-                    }
+                    ["backgroundRepeat", "backgroundColor",
+                    "borderLeftWidth", "borderRightWidth", 
+                    "borderTopWidth", "borderBottomWidth", "borderLeftColor",
+                    "borderRightColor", "borderTopColor", "borderBottomColor",
+                    "borderLeftStyle", "borderRightStyle", "borderTopStyle", "borderBottomStyle"].each(function(style) {
+                        var data = {};
+                        data[style] = element.getStyle(style);
+                        zoomedImage.setStyle(data);
+                    });
                 }
                 
                 var borderLeft = parseInt(zoomedImage.getStyle('borderLeftWidth'));
