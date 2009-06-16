@@ -50,7 +50,12 @@ Themes.Default = {
     blankPixel: "blank.gif",
     duration: 0.5,
     fadeDuration: 0.25,
-    toggleDuration: 0.3
+    toggleDuration: 0.3,
+    
+    // Configure lightbox here
+    lightboxColor: '#000000',
+    lightboxOpacity: 0.5,
+    lightboxZIndex: 100
 };
 
 Themes.idevice = {
@@ -317,7 +322,84 @@ ImgZoomer.DefaultOptions = {
 };
 
 ImgZoomer.prototype = {
-    initialize: function(linkSelector, options) {
+    getPageSize: function() {
+    	var xScroll, yScroll;
+
+    	if (window.innerHeight && window.scrollMaxY) {	
+    		xScroll = document.body.scrollWidth;
+    		yScroll = window.innerHeight + window.scrollMaxY;
+    	} else if (document.body.scrollHeight > document.body.offsetHeight){ // all but Explorer Mac
+    		xScroll = document.body.scrollWidth;
+    		yScroll = document.body.scrollHeight;
+    	} else { // Explorer Mac...would also work in Explorer 6 Strict, Mozilla and Safari
+    		xScroll = document.body.offsetWidth;
+    		yScroll = document.body.offsetHeight;
+    	}
+
+    	var windowWidth, windowHeight;
+    	if (self.innerHeight) {	// all except Explorer
+    		windowWidth = self.innerWidth;
+    		windowHeight = self.innerHeight;
+    	} else if (document.documentElement && document.documentElement.clientHeight) { // Explorer 6 Strict Mode
+    		windowWidth = document.documentElement.clientWidth;
+    		windowHeight = document.documentElement.clientHeight;
+    	} else if (document.body) { // other Explorers
+    		windowWidth = document.body.clientWidth;
+    		windowHeight = document.body.clientHeight;
+    	}	
+
+    	// for small pages with total height less then height of the viewport
+    	if(yScroll < windowHeight){
+    		pageHeight = windowHeight;
+    	} else { 
+    		pageHeight = yScroll;
+    	}
+
+    	// for small pages with total width less then width of the viewport
+    	if(xScroll < windowWidth){	
+    		pageWidth = windowWidth;
+    	} else {
+    		pageWidth = xScroll;
+    	}
+    	
+    	arrayPageSize = new Array(pageWidth,pageHeight,windowWidth,windowHeight) 
+    	return arrayPageSize;
+    },
+    
+    setupLightBox: function() {
+        if (!this.options.useLightbox) return;
+        
+        this.lightbox = new Element("div");
+        
+        this.lightbox.setStyle({
+            position: 'absolute',
+            top: '0', left: '0',
+            width: '100%', height: this.getPageSize()[1] + 'px',
+            backgroundColor: this.options.theme.lightboxColor,
+            zIndex: this.options.theme.lightboxZIndex,
+            display: 'none'
+        });
+        
+        $(document.body).insert(this.lightbox);
+    },
+    
+    showLightBox: function() {
+        if (!this.options.useLightbox) return;
+        
+        this.lightbox.setStyle({
+            height: this.getPageSize()[1] + 'px'
+        });
+        
+        new Effect.Appear(this.lightbox, { to: this.options.theme.lightboxOpacity });
+    },
+    
+    hideLightBox: function() {
+        if (!this.options.useLightbox) return;
+                
+        new Effect.Fade(this.lightbox);
+    },
+    
+    initialize: function(linkSelector, options) {        
         this.linkElements = new Array();
         this.zoomedImages = new Array();
         this.imageSizes   = new Array();
@@ -341,6 +423,8 @@ ImgZoomer.prototype = {
         if (this.options.theme.shadowTheme == null) {
             this.options.theme.shadows = false;
         }
+        
+        this.setupLightBox();
 
         this.imgZoomer = new Element("div");
         this.imgZoomer.addClassName(this.options.imgZoomerClass);
@@ -887,6 +971,8 @@ ImgZoomer.prototype = {
                 $(document).stopObserving('keypress', this.escapeFunction);            
                 this.escapeFunction = null;
             }
+            
+            this.hideLightBox();
         } else {
             this.options.onOpen();
             
@@ -935,6 +1021,8 @@ ImgZoomer.prototype = {
             });
             
             this.findLink(zoomedImage).classNames().add(this.options.theme.activeClass);
+            
+            this.showLightBox();
         }
 
         return false;

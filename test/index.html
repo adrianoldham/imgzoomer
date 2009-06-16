@@ -13,6 +13,13 @@
     <script type="text/javascript" charset="utf-8" src="../js/plugins/iframezoomer.js"></script>
     
 	<link rel="stylesheet" media="screen, projection" type="text/css" href="style.css" />
+	
+	<style type="text/css" media="screen">
+		body {
+			padding: 0;
+			margin: 0;
+		}
+	</style>
 </head>
 <body style="text-align: center">
 	<div id="testdiv">
@@ -20,13 +27,14 @@
 		<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 	</div>
 	
-	<div id="blackContainer" style="height: 488px; width: 650px; margin: 0 auto; background-color: #ddd">
+	<div id="blackContainer" style="height: 588px; width: 550px; margin: 0 auto; background-color: #ddd">
 		<p><a href="#testdiv" class="zoomer2">TEST DIV</a></p>
 	</div>
 	<a href="images/test.jpg" class="zoomer">TEST IMAGE</a>
 	
 	<a class="zoomer2" href="http://maps.google.com.au/maps?f=q&amp;hl=en&amp;geocode=&amp;q=275+Kent+Street+Sydney&amp;sll=-25.335448,135.745076&amp;sspn=65.961118,63.632813&amp;ie=UTF8&amp;layer=c&amp;cbll=-33.865163,151.203188&amp;panoid=J1zNskEXkRtr6_De_nzphA&amp;s=AARTsJqrLiiuK0LIBiJ0xPZ_7RE5GR72uA&amp;ll=-33.853096,151.198826&amp;spn=0.024948,0.036478&amp;z=14&amp;iwloc=addr&amp;output=embed&amp;iframe=1">Google Maps!</a>
 	<div id="test">0</div>
+
     <script type="text/javascript" charset="utf-8">
         function runTest() {
 	        var ImgZoomer1 = new ImgZoomer("a.zoomer", {
@@ -34,7 +42,8 @@
 				zoomRects: false,
 				closeOnBlur: false,
 				closeBoxClass: "closeBox",
-				centerOf: 'blackContainer'
+				centerOf: 'blackContainer',
+				useLightbox: true
             });
 
             var ImgZoomer2 = new ImgZoomer("a.zoomer2", {
@@ -43,7 +52,8 @@
 				zoomRectsClass: "zoomRect",
 				closeOnBlur: false,
 				width: 500,
-				height: 400
+				height: 400,
+				useLightbox: true
             });
         }  
         Event.observe(window, "load", runTest);
