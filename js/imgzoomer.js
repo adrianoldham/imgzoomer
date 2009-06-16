@@ -330,7 +330,7 @@ ImgZoomer.prototype = {
     	if (window.innerHeight && window.scrollMaxY) {	
     		xScroll = document.body.scrollWidth;
     		yScroll = window.innerHeight + window.scrollMaxY;
-    	} else if (document.body.scrollHeight > document.body.offsetHeight){ // all but Explorer Mac
+    	} else if (document.body.scrollHeight > document.body.offsetHeight) { // all but Explorer Mac
     		xScroll = document.body.scrollWidth;
     		yScroll = document.body.scrollHeight;
     	} else { // Explorer Mac...would also work in Explorer 6 Strict, Mozilla and Safari
@@ -351,20 +351,20 @@ ImgZoomer.prototype = {
     	}	
 
     	// for small pages with total height less then height of the viewport
-    	if(yScroll < windowHeight){
+    	if(yScroll < windowHeight) {
     		pageHeight = windowHeight;
     	} else { 
     		pageHeight = yScroll;
     	}
 
     	// for small pages with total width less then width of the viewport
-    	if(xScroll < windowWidth){	
+    	if(xScroll < windowWidth) {	
     		pageWidth = windowWidth;
     	} else {
     		pageWidth = xScroll;
     	}
     	
-    	arrayPageSize = new Array(pageWidth,pageHeight,windowWidth,windowHeight) 
+    	arrayPageSize = new Array(pageWidth,pageHeight,windowWidth,windowHeight);
     	return arrayPageSize;
     },
     
