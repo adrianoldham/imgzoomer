@@ -55,7 +55,9 @@ Themes.Default = {
     // Configure lightbox here
     lightboxColor: '#000000',
     lightboxOpacity: 0.5,
-    lightboxZIndex: 100
+    lightboxZIndex: 100,
+    lightboxAnimationDuration: 0.2,
+    lightboxSequence: "before" // after, parallel, or before
 };
 
 Themes.idevice = {
@@ -390,13 +392,18 @@ ImgZoomer.prototype = {
             height: this.getPageSize()[1] + 'px'
         });
         
-        new Effect.Appear(this.lightbox, { to: this.options.theme.lightboxOpacity });
+        new Effect.Appear(this.lightbox, { 
+            to: this.options.theme.lightboxOpacity,
+            duration: this.options.theme.lightboxAnimationDuration
+        });
     },
     
     hideLightBox: function() {
         if (!this.options.useLightbox) return;
                 
-        new Effect.Fade(this.lightbox);
+        new Effect.Fade(this.lightbox, {
+            duration: this.options.theme.lightboxAnimationDuration
+        });
     },
     
     initialize: function(linkSelector, options) {        
@@ -713,6 +720,11 @@ ImgZoomer.prototype = {
                 $(document).observe('keypress', this.escapeFunction);
             }
         }
+        
+        // Show light box after zooming out
+        if (this.options.useLightbox && this.options.theme.lightboxSequence == 'after') {
+            this.showLightBox();
+        }
     },
 
     showSpinner: function(parentX, parentY, parentWidth, parentHeight) {
@@ -915,6 +927,12 @@ ImgZoomer.prototype = {
 
         // toggle zoom in or out
         if (zoomedImage.style.display != "none") {
+            // Work out delay, if hiding after lightbox
+            var delay = 0;
+            if (this.options.useLightbox && this.options.theme.lightboxSequence == 'after') {
+                delay = this.options.theme.lightboxAnimationDuration;
+            }
+            
             this.options.onClose();
             
             if (this.closing == zoomedImage) return;
@@ -926,13 +944,14 @@ ImgZoomer.prototype = {
             }
             
             this.closeContent(zoomedImage, effects);
-                    
+                
             var linkElement = this.findLink(zoomedImage).childElements().first();
             if (linkElement == null) linkElement = this.findLink(zoomedImage);
             var absolutePosition = this.screenPosition(linkElement);
 
             // hide shadows and close box first
             new Effect.Parallel(effects, {
+                delay: delay,
                 duration: this.options.theme.fadeDuration,
                 queue: { position: "end", scope: "imgzoomer" }
             });
@@ -958,6 +977,11 @@ ImgZoomer.prototype = {
                         for (pluginName in ImgZoomer.plugins) {
                            ImgZoomer.plugins[pluginName].removeContent(this, zoomedImage);
                         }
+                        
+                        // Hide light box after zooming out
+                        if (this.options.useLightbox && this.options.theme.lightboxSequence == 'before') {
+                            this.hideLightBox();
+                        }
                     }.bindAsEventListener(this, zoomedImage)
                 }
             );
@@ -972,8 +996,17 @@ ImgZoomer.prototype = {
                 this.escapeFunction = null;
             }
             
-            this.hideLightBox();
+            // Hide light box in parallel
+            if (this.options.useLightbox && this.options.theme.lightboxSequence != 'before') {
+                this.hideLightBox();
+            }
         } else {
+            // Work out delay, if showing after lightbox
+            var delay = 0;
+            if (this.options.useLightbox && this.options.theme.lightboxSequence == 'before') {
+                delay = this.options.theme.lightboxAnimationDuration;
+            }
+            
             this.options.onOpen();
             
             if (this.options.updatePosition) {
@@ -1015,6 +1048,7 @@ ImgZoomer.prototype = {
                     new Effect.Appear(zoomedImage, { sync: true }),
                     new Effect.MoveAndResizeTo(zoomedImage, center.top, center.left, center.width, center.height, { sync: true })
                 ], {
+                    delay: delay,
                     queue: { position: "end", scope: "imgzoomer" },
                     duration: duration,
                     afterFinish: this.openCloseBox.bindAsEventListener(this, zoomedImage)
@@ -1022,7 +1056,10 @@ ImgZoomer.prototype = {
             
             this.findLink(zoomedImage).classNames().add(this.options.theme.activeClass);
             
-            this.showLightBox();
+            // Hide light box in parallel
+            if (this.options.useLightbox && this.options.theme.lightboxSequence != 'after') {
+                this.showLightBox();
+            }
         }
 
         return false;
