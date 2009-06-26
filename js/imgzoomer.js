@@ -9,7 +9,11 @@ Element.addMethods({
 // returns the div holding the shadow elements
 Element.addMethods({ 
     applyShadow: function(element, theme) {
-        return (new ShadowMe(theme)).applyTo(element).appendToDom().show().shadowHolder;
+        var shadowMe = element.shadowMe;
+        if (shadowMe == null) shadowMe = new ShadowMe(theme);
+        shadowMe.applyTo(element).appendToDom().show();
+        element.shadowMe = shadowMe;
+        return shadowMe.shadowHolder;
     },
     
     iePNGFix: function(element, blankPixel) {
@@ -117,6 +121,7 @@ ShadowMe.prototype = {
     },
 
     applyTo: function(element, doNotReapply) {
+        console.log('apply')
         if (element.complete != null) {
             if (!element.complete) {
                 // if applying image to shadow and image width not know yet then wait until it is

@@ -34,28 +34,36 @@
 	
 	<a class="zoomer2" href="http://maps.google.com.au/maps?f=q&amp;hl=en&amp;geocode=&amp;q=275+Kent+Street+Sydney&amp;sll=-25.335448,135.745076&amp;sspn=65.961118,63.632813&amp;ie=UTF8&amp;layer=c&amp;cbll=-33.865163,151.203188&amp;panoid=J1zNskEXkRtr6_De_nzphA&amp;s=AARTsJqrLiiuK0LIBiJ0xPZ_7RE5GR72uA&amp;ll=-33.853096,151.198826&amp;spn=0.024948,0.036478&amp;z=14&amp;iwloc=addr&amp;output=embed&amp;iframe=1">Google Maps!</a>
 	<div id="test">0</div>
+	
+	<div id="shadowdiv" style="width: 200px; height: 200px; background-color: black"></div>
 
     <script type="text/javascript" charset="utf-8">
         function runTest() {
 	        var ImgZoomer1 = new ImgZoomer("a.zoomer", {
                 imagePath: "../images/imgzoomer/",
-				zoomRects: false,
-				closeOnBlur: false,
-				closeBoxClass: "closeBox",
-				centerOf: 'blackContainer',
-				useLightbox: true
+                zoomRects: false,
+                closeOnBlur: false,
+                closeBoxClass: "closeBox",
+                centerOf: 'blackContainer',
+                useLightbox: true
             });
 
             var ImgZoomer2 = new ImgZoomer("a.zoomer2", {
                 imagePath: "../images/imgzoomer/",
-				zoomRects: true,
-				zoomRectsClass: "zoomRect",
-				closeOnBlur: false,
-				width: 500,
-				height: 400,
-				useLightbox: true
+                zoomRects: true,
+                zoomRectsClass: "zoomRect",
+                closeOnBlur: false,
+                width: 500,
+                height: 400,
+                useLightbox: true
             });
+            
+            // Testing reapply
+            $('shadowdiv').applyShadow( { imagePath: "../images/imgzoomer/" });
+            $('shadowdiv').setStyle({ width: '300px' });            
+            $('shadowdiv').applyShadow( { imagePath: "../images/imgzoomer/" });
         }  
+        
         Event.observe(window, "load", runTest);
     </script>
 </body>
