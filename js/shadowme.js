@@ -98,7 +98,7 @@ ShadowMe.prototype = {
         // Quite tricky has we have to handle reappling of the shadow 
         // So we don't create a wrapper every time
         if (this.options.wrapElement) {
-            var wrapperElement = $(element.parentNode)
+            var wrapperElement = $(element.parentNode);
             
             if (wrapperElement != null && wrapperElement.hasClassName("shadowMeWrapper")) {
                 element = element.remove();
