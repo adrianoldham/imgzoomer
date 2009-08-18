@@ -84,7 +84,6 @@ ShadowMe.prototype = {
     },
 
     applyTo: function(element, doNotReapply) {
-        console.log('apply')
         if (element.complete != null) {
             if (!element.complete) {
                 // if applying image to shadow and image width not know yet then wait until it is
