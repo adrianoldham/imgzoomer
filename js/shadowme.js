@@ -41,7 +41,7 @@ var ShadowMe = Class.create();
 
 // Default ShadowMe options to use
 ShadowMe.DefaultOptions = {
-    wrapElement: false,
+    wrapElement: true,
     zIndex: 100,
     overlay: "bottom"
 };
@@ -91,6 +91,8 @@ ShadowMe.prototype = {
                 return this;
             }
         }
+        
+        var actualElement = element;
         
         // Wrap the target element if required
         // Quite tricky has we have to handle reappling of the shadow 
@@ -151,7 +153,7 @@ ShadowMe.prototype = {
         //if (!isNaN(element.style.zIndex))
         //    this.shadowHolder.style.zIndex = element.style.zIndex - 3;
             
-        if (this.element != element && !doNotReapply) {
+        if (this.element != actualElement && !doNotReapply) {
 //          if (this.timer) this.timer.stop();
 //          this.timer = new PeriodicalExecuter(this.applyTo.bind(this, element), 0.1);
             if (this.applier) {
@@ -159,13 +161,13 @@ ShadowMe.prototype = {
                 Event.stopObserving(window, "resize", this.applier);   
             }
             
-            this.applier = this.applyTo.bind(this, element, true);
+            this.applier = this.applyTo.bind(this, actualElement, true);
             
             Event.observe(window, "scroll", this.applier);
             Event.observe(window, "resize", this.applier);
         }
         
-        this.element = element;
+        this.element = actualElement;
 
         return this;
     },
