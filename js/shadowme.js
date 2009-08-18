@@ -41,7 +41,7 @@ var ShadowMe = Class.create();
 
 // Default ShadowMe options to use
 ShadowMe.DefaultOptions = {
-    wrapElement: true,
+    wrapElement: false,
     zIndex: 100,
     overlay: "bottom"
 };
