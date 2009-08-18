@@ -106,6 +106,8 @@ ShadowMe.prototype = {
             
             wrapperElement = new Element("div", { "class": "shadowMeWrapper" });
             element.wrap(wrapperElement);
+            
+            element = wrapperElement;
         }
         
         var absolutePosition = element.cumulativeOffset();
