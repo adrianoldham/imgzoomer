@@ -119,7 +119,7 @@ ShadowMe.prototype = {
             element.style.position = "relative";
         }
         
-        if (element.getStyle("zIndex") != "") {
+        if (element.getStyle("zIndex") != "" && element.getStyle("zIndex") != null) {
             if (this.options.overlay == "top") 
                 this.shadowHolder.style.zIndex = parseInt(element.getStyle("zIndex")) + 1;
             else
