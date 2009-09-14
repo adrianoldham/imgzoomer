@@ -1,10 +1,3 @@
-// precheck if IE
-var isIE = (/MSIE (5\.5|6\.)/.test(navigator.userAgent) && navigator.platform == "Win32");
-
-Element.addMethods({ 
-    iePNGFix: function(element) {}
-});
-
 // Quick helper function to apply shadow to an element
 // returns the div holding the shadow elements
 Element.addMethods({ 
@@ -14,25 +7,6 @@ Element.addMethods({
         shadowMe.applyTo(element).appendToDom().show();
         element.shadowMe = shadowMe;
         return shadowMe.shadowHolder;
-    },
-    
-    iePNGFix: function(element, blankPixel) {
-        if (element.src == blankPixel) return;        
-        if (!isIE) return;
-        
-        // wait till image is preloaded
-        if (!element.complete) {
-            setTimeout(function(_element, _blankPixel) {
-                _element.iePNGFix(_blankPixel);
-            }.bind(this, element, blankPixel), 100);
-            
-            return;
-        }
-        
-        element.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + element.src + "',sizingMethod='scale')";
-        element.style.width = element.width + "px";
-        element.style.height = element.height + "px";
-        element.src = blankPixel || "/images/blank.gif";
     }
 });
 
@@ -50,7 +24,7 @@ ShadowMe.totalShadows = 0;
 
 ShadowMe.prototype = {
     initialize: function(options) {        
-        this.options = Object.extend(Object.extend({ }, ShadowMe.DefaultOptions), options || { });        
+        this.options = Object.extend(Object.extend({ }, ShadowMe.DefaultOptions), options || { });
         this.options.theme = Object.extend({ }, Themes.Default);
         
         if (this.options.zIndex == null) {

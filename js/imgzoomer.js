@@ -245,7 +245,7 @@ ImgZoomer.prototype = {
         Object.extend(this.options.theme, this.options || {});
 
         // no fading shadows for IE
-        if (navigator.appName == "Microsoft Internet Explorer") {
+        if (hasNoAlphaAnimationSupport) {
             this.options.theme.fadeDuration = 0;
         }
         
