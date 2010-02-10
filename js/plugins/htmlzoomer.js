@@ -4,7 +4,7 @@ Object.extend(ImgZoomer.plugins, {
             zoomer.elements = zoomer.elements || [];
             var element = $(anchor.href.substring(anchor.href.lastIndexOf("#") + 1));
             
-            if (element) {            
+            if (element) {
                 var contentDiv = new Element("div");
                 
                 contentDiv.style.position = "absolute";
@@ -23,6 +23,8 @@ Object.extend(ImgZoomer.plugins, {
         },
         
         setContent: function(zoomer, element, zoomedImage) {
+            if (!zoomer.elements) return;
+            
             var zoomIndex = zoomer.zoomedImages.index(zoomedImage);
             var htmlElement = zoomer.elements[zoomIndex];
             
