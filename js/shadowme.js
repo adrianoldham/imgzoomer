@@ -149,6 +149,8 @@ ShadowMe.prototype = {
     positionShadow: function(shadow, x, y, width, height) {
         shadow.style.left = x + "px";
         shadow.style.top = y + "px";
+        
+        if (height <= 0) { height = 1; }
 
         if (width != null && width > 0) shadow.style.width = width + "px";
         if (height != null && height > 0) shadow.style.height = height + "px";
