@@ -129,6 +129,7 @@ shadowDepth - The visible portion of shadow file displayed in pixels
 shadowThemeSize - The actual shadow image file dimensions in pixels
 imgZoomerClass - The CSS classname applied to the imgZoomer container
 zIndex - The topmost zIndex from which all others are derived
+centerOf - Center zoomed image to this element id
 */
 
 var ImgZoomer = Class.create();
